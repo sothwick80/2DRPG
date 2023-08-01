@@ -41,9 +41,10 @@ class CharacterInfo(Player):
     def get_defend(self):
         pass
 
-class Item(ItemBlockSprite):
+#class Item(ItemBlockSprite):
+class Item(StaticSprite):
     def __init__(self, game, x, y, pixx, pixy, index):
-        ItemBlockSprite.__init__(self, game, x, y, pixx, pixy)
+        StaticSprite.__init__(self, game, x, y, pixx, pixy, BLOCK_LAYER)
         #this block has an item!
         self.hasitem = True
         self.itemid = index

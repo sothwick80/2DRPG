@@ -277,23 +277,23 @@ class Player(pygame.sprite.Sprite):
                     self.animation_loop = 1
 
 #Sprites that contain items
-class ItemBlockSprite(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, pixx, pixy):
-        self.game = game
-        self._layer = BLOCK_LAYER
+#class ItemBlockSprite(pygame.sprite.Sprite):
+#    def __init__(self, game, x, y, pixx, pixy):
+#        self.game = game
+#        self._layer = BLOCK_LAYER
         
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
-        self.width = TILESIZE  
-        self.height = TILESIZE
+#        self.x = x * TILESIZE
+#        self.y = y * TILESIZE
+#        self.width = TILESIZE  
+ #       self.height = TILESIZE
 
-        self.groups = self.game.all_sprites, self.game.blocks, self.game.items
-        self.image = self.game.temp_spritesheet.get_sprite(pixx, pixy, self.width, self.height)
+#        self.groups = self.game.all_sprites, self.game.blocks
+#        self.image = self.game.temp_spritesheet.get_sprite(pixx, pixy, self.width, self.height)
 
-        pygame.sprite.Sprite.__init__(self, self.groups)
-        self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
+#        pygame.sprite.Sprite.__init__(self, self.groups)
+#       self.rect = self.image.get_rect()
+#        self.rect.x = self.x
+ #       self.rect.y = self.y
 
 class AnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, game, x, y):

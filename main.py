@@ -32,8 +32,10 @@ class Game:
         #LIST OF BATTLE ENEMIES
         self.mobs = []
 
-        #list of dialog NPCs, empty and reload when zoning
+        #list of dialog NPCs in the current zone, empty and reload when zoning
         self.dialognpc = []
+        #list of items in chests or available for PU in the zone, empty and reload when zoning
+        self.items = []
 
         #set battle timers
         self.playertimer = pygame.event.custom_type()
@@ -73,7 +75,7 @@ class Game:
         self.npc = pygame.sprite.LayeredUpdates()
         #self.dialognpc = pygame.sprite.LayeredUpdates()
         self.text = pygame.sprite.LayeredUpdates()
-        self.items = pygame.sprite.LayeredUpdates()
+        #self.items = pygame.sprite.LayeredUpdates()
 
         #CREATE PLAYER AND ADD TO PARTY
         #self.party.append(Player(self, 10, 10))
@@ -103,6 +105,7 @@ class Game:
     def createTilemap(self, map):
         if map == FRANTIKSHUT:
             self.dialognpc.clear()
+            self.items.clear()
             for i, row in enumerate(map):
                 for j, column in enumerate(row):
                     StaticSprite(self, j, i, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
@@ -117,15 +120,13 @@ class Game:
                     if column == "R":
                         StaticSprite(self, j, i, KELETHINPOTX, KELETHINPOTY, BLOCK_LAYER)
                     if column == "O":
-                        Item(self, j, i, KELETHINPOTX, KELETHINPOTY, POTION)
+                        self.items.append(Item(self, j, i, KELETHINPOTX, KELETHINPOTY, POTION))
                     if column == "G":
-                        Item(self, j, i, CHESTX, CHESTY,  SWORD)
+                        self.items.append(Item(self, j, i, CHESTX, CHESTY,  SWORD))
                     if column == "N":
                         self.dialognpc.append(DialogNPC(self, j, i, NPCX, NPCY, DIALOGNPC_LAYER, QUESTNPC))
                     if column == "S":
                         self.dialognpc.append(DialogNPC(self, j, i, NPCX, NPCY, DIALOGNPC_LAYER, NEXTNPC))
-                    #if column == "E":
-                        #AnimatedSprite(self, j, i)
                     if column == "P": 
                         self.party[self.top_character].x = j
                         self.party[self.top_character].y = i
@@ -272,40 +273,40 @@ class Game:
 
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_e and not self.in_dialog:
-                    #check if NPC has dialog
-                    
-                    #for sprite in self.dialognpc:                        
-                    #    hits = pygame.sprite.spritecollide(self.party[self.top_character], self.dialognpc, False, pygame.sprite.collide_rect_ratio(2.0))
+                    #player is pressing action key so we look for item / npc and take appropriate action
+
+                    #check through dialog NPCs and display text as necessary
                     tempint = 0
-                    while tempint < self.dialognpc.__len__():
-                        if pygame.sprite.collide_rect_ratio(2.0)(self.party[self.top_character], self.dialognpc[tempint]):
+                    while tempint < self.dialognpc.__len__(): #go through each NPC in list
+                        if pygame.sprite.collide_rect_ratio(1.1)(self.party[self.top_character], self.dialognpc[tempint]):
                             print("Hit NPC")
-                            self.in_dialog = True
-                            #grab sprite info, can't grab on next dialog
+                            self.in_dialog = True #we are now in a dialog
+                            #set temp info to pass along to if indialog
                             self.tempindex = 0
                             self.templength = self.dialognpc[tempint].dialoglength
                             self.tempdialog = self.dialognpc[tempint].dialog
                             self.showDialog(self.tempdialog[self.tempindex])
                             hits = False
-                        else:
-                            print("No Hit on NPC")
+
                         tempint += 1
 
                     #check if the block has an item in it
-                    for sprite in self.items:
-                        hits = pygame.sprite.spritecollide(self.party[self.top_character], self.items, False, pygame.sprite.collide_rect_ratio(2.0))    
-                        if hits:
+                    tempint = 0
+                    while tempint < self.items.__len__(): #go through each item spot in list
+                        if pygame.sprite.collide_rect_ratio(1.05)(self.party[self.top_character], self.items[tempint]):
                             print("looking through items")
-                            if sprite.hasitem: #put item into inventory
-                                self.party[self.top_character].inventory.append(sprite)
-                                sprite.hasitem = False #item is removed
+                            if self.items[tempint].hasitem: #put item into inventory
+                                self.party[self.top_character].inventory.append(self.items[tempint])
+                                self.items[tempint].hasitem = False #item is removed
                                 #display name of item at end of intentory (length - 1)
                                 print("You picked up a ",self.party[self.top_character].inventory[self.party[self.top_character].inventory.__len__() - 1].name)
-                            break    
+                        tempint += 1  
 
                 elif event.key == pygame.K_e and self.in_dialog:
+                    #when a player is in a dialog, continue on or exit
                     self.tempindex += 1 #increase to next index
                     print("Is", self.templength, ">", self.tempindex)
+                    #if there's still dialog, keep displaying
                     if self.templength > self.tempindex:
                         print ("Next dialog")
                         #call the next line, and do so until over
