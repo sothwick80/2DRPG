@@ -79,7 +79,7 @@ class Game:
 
         #CREATE PLAYER AND ADD TO PARTY
         #self.party.append(Player(self, 10, 10))
-        self.party.append(CharacterInfo(self, 10, 10))
+        self.party.append(CharacterSheet(self, 10, 10))
         self.createTilemap(self.current_zone.id)
 
         #DIALOG
@@ -120,9 +120,9 @@ class Game:
                     if column == "R":
                         StaticSprite(self, j, i, KELETHINPOTX, KELETHINPOTY, BLOCK_LAYER)
                     if column == "O":
-                        self.items.append(Item(self, j, i, KELETHINPOTX, KELETHINPOTY, POTION))
+                        self.items.append(ItemBlock(self, j, i, KELETHINPOTX, KELETHINPOTY, POTION))
                     if column == "G":
-                        self.items.append(Item(self, j, i, CHESTX, CHESTY,  SWORD))
+                        self.items.append(ItemBlock(self, j, i, CHESTX, CHESTY,  SWORD))
                     if column == "N":
                         self.dialognpc.append(DialogNPC(self, j, i, NPCX, NPCY, DIALOGNPC_LAYER, QUESTNPC))
                     if column == "S":
@@ -228,11 +228,8 @@ class Game:
         self.draw()
         self.update()
         #flag in battle
-        self.in_battle = True
+        #self.in_battle = True
 
-        #start up player timer
-        #pygame.time.set_timer(self.playertimer, 400)
-        
         #set timers - use inits to offset
         pygame.time.set_timer(self.playertimer, 350)       
         pygame.time.set_timer(self.mobtimer, 300)
@@ -286,7 +283,6 @@ class Game:
                             self.templength = self.dialognpc[tempint].dialoglength
                             self.tempdialog = self.dialognpc[tempint].dialog
                             self.showDialog(self.tempdialog[self.tempindex])
-                            hits = False
 
                         tempint += 1
 
@@ -296,8 +292,9 @@ class Game:
                         if pygame.sprite.collide_rect_ratio(1.05)(self.party[self.top_character], self.items[tempint]):
                             print("looking through items")
                             if self.items[tempint].hasitem: #put item into inventory
-                                self.party[self.top_character].inventory.append(self.items[tempint])
                                 self.items[tempint].hasitem = False #item is removed
+                                self.party[self.top_character].inventory.append(Item(self.items[tempint].itemid))
+                                
                                 #display name of item at end of intentory (length - 1)
                                 print("You picked up a ",self.party[self.top_character].inventory[self.party[self.top_character].inventory.__len__() - 1].name)
                         tempint += 1  
