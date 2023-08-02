@@ -57,6 +57,7 @@ class Item():
             self.description = "This potion heals a small boo boo" #description of item
             self.equip = False #if equippable, if not put in inventory directly
             self.effect = MINORRELIEF #if item has an effect
+            #get a pic for the item as well, put it here - sprite sheet but does it have to be a whole sprite?
         elif itemid == SWORD:
             self.name = "Rusty Sword" #name of the item
             self.description = "Barely a sword." #description of item
@@ -69,6 +70,7 @@ class ItemBlock(StaticSprite):
         StaticSprite.__init__(self, game, x, y, pixx, pixy, BLOCK_LAYER)
         #this block has an item!
         self.hasitem = True
+        #item reference to plug into Item() to return an item to player
         self.itemid = index
 
 class DialogNPC(StaticSprite):

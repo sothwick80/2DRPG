@@ -37,6 +37,7 @@ class Game:
         #list of items in chests or available for PU in the zone, empty and reload when zoning
         self.items = []
 
+        #
         #set battle timers
         self.playertimer = pygame.event.custom_type()
         self.mobtimer = pygame.event.custom_type()
@@ -131,7 +132,7 @@ class Game:
                         self.party[self.top_character].x = j
                         self.party[self.top_character].y = i
 
-        if map == KELETHINMAIN:
+        elif map == KELETHINMAIN:
             for i, row in enumerate(map):
                 for j, column in enumerate(row):
                     StaticSprite(self, j, i+KELETHINMAINOFFSET, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
@@ -151,7 +152,7 @@ class Game:
                         self.party[self.top_character].x = j
                         self.party[self.top_character].y = i+KELETHINMAINOFFSET
 
-        if map == KELETHINBATTLE:
+        elif map == KELETHINBATTLE:
             self.mobs.clear()
             for i, row in enumerate(map):
                 for j, column in enumerate(row):                    
@@ -173,6 +174,18 @@ class Game:
                     if column == "P":
                         self.party[self.top_character].x = j
                         self.party[self.top_character].y = i
+        
+        elif map == MENU:
+            #empty the sprite groups
+            self.all_sprites.empty()
+            self.blocks.empty()
+            self.enemies.empty()
+            self.zonelines.empty()
+            for i, row in enumerate(map):
+                for j, column in enumerate(row):
+                    StaticSprite(self, j, i, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
+                    if column == "A":
+                        StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)       
 
     #mytimer = pygame.event.custom_type()
     #pygame.time.set_timer(mytimer, 400)
@@ -204,11 +217,29 @@ class Game:
 
     def playerAttack(self, mob):
         print("Player attacking!")
+        temproll = random.randint(1, 20)
+        if temproll == 20:
+            print ("Natural 20, critical chance!")
+        elif temproll == 1:
+            print ("Natural 1, critical miss!")
+        else:
+            print ("Rolled a ", temproll)
+        #if (D20 + self.atkbonus) > mob.ac == HIT!
+        #mob.hp -= strbonus + weapon damage
+        #remember, 20 is always a hit maybe a crit, 1 is always a miss
+        #random.randint(1, 20) # roll a D20
         mob.hp -= 1
 
     def mobAttack(self, player):
         for i in range(self.mobs.__len__()):
             print ("Enemy ", i+1, "is attacking")
+            temproll = random.randint(1, 20)
+            if temproll == 20:
+                print ("Enemy Natural 20, critical chance!")
+            elif temproll == 1:
+                print ("Enemy Natural 1, critical miss!")
+            else:
+                print ("Enemy Rolled a ", temproll)
             #each mob does 1 damage to player
             player.hp -= 1
     
@@ -231,7 +262,8 @@ class Game:
         #self.in_battle = True
 
         #set timers - use inits to offset
-        pygame.time.set_timer(self.playertimer, 350)       
+        #currently the Party and the Mobs groups all attack at the same time on the same timer
+        pygame.time.set_timer(self.playertimer, 200)       
         pygame.time.set_timer(self.mobtimer, 300)
 
         #from here timer events take over, until battle is over
@@ -333,7 +365,7 @@ class Game:
             self.update()
             self.draw()
 
-    def charactersheet(self):
+    def menu(self):
         self.inmenu = True
         exit_button = Button(20, 25, 90, 30, WHITE, BLACK, 'Back', 32)
         character_button = Button(130, 25, 180, 30, WHITE, BLACK, 'Character', 32)
@@ -352,7 +384,7 @@ class Game:
 
             if exit_button.is_pressed(mouse_pos, mouse_pressed):    
                 self.inmenu = False
-
+            #elif 
             self.screen.blit(self.menu_background, (0, 0))
             self.screen.blit(exit_button.image, exit_button.rect)
             self.screen.blit(character_button.image, character_button.rect)
