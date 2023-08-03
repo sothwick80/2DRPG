@@ -160,15 +160,7 @@ class Game:
                     if column == "A":
                         StaticSprite(self, j, i, BATTLEWALLX, BATTLEWALLY, BLOCK_LAYER)
                     if column == "B":
-                        StaticSprite(self, j, i, BATTLEWALLX + TILESIZE, BATTLEWALLY, BLOCK_LAYER)
-                    if column == "C":
-                        StaticSprite(self, j, i, BATTLEWALLX, BATTLEWALLY + TILESIZE, BLOCK_LAYER)
-                    if column == "D":
-                        StaticSprite(self, j, i, BATTLEWALLX + TILESIZE, BATTLEWALLY + TILESIZE, BLOCK_LAYER)
-                    if column == "M":
-                        StaticSprite(self, j, i, BATTLEMENUWALLX, BATTLEMENUWALLY, BLOCK_LAYER)
-                    if column == ",":
-                        StaticSprite(self, j, i, BATTLEMENUBACKX, BATTLEMENUWALLY, BLOCK_LAYER)
+                        StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)
                     if column == "E": #create sprite and add to battle list
                         self.mobs.append(MobSheet(self, j, i))
                     if column == "P":
@@ -211,7 +203,7 @@ class Game:
             if deadcounter == self.mobs.__len__():
                 print("You are victorious!")
                 self.endBattle()
-
+                
     def playerAttack(self, mob):
         print("Player attacking!")
         temproll = random.randint(1, 20)
@@ -244,7 +236,7 @@ class Game:
                     #random the damage die for the weapon
                     temproll2 = random.randint(1,self.party[0].gear[PRIMARY].atk)
                     # show damage being done to mob
-                    print("Player does", temproll2 + self.party[0].atkbonus, "damage")
+                    print("Enemy does", temproll2 + self.party[0].atkbonus, "damage")
                     player.hp -=  temproll2 + self.party[0].atkbonus + self.party[0].strmod
     
     def endBattle(self):
@@ -375,7 +367,9 @@ class Game:
         character_button = Button(130, 25, 180, 30, WHITE, BLACK, 'Character', 32)
         inventory_button = Button(320, 25, 180, 30, WHITE, BLACK, 'Inventory', 32)
         quest_button = Button(520, 25, 150, 30, WHITE, BLACK, 'Quests', 32)
+         #save current zone
 
+        self.createTilemap(MENU)
 
         while self.inmenu:
             for event in pygame.event.get():
@@ -389,7 +383,7 @@ class Game:
             if exit_button.is_pressed(mouse_pos, mouse_pressed):    
                 self.inmenu = False
             #elif 
-            self.screen.blit(self.menu_background, (0, 0))
+            #self.screen.blit(self.menu_background, (0, 0))
             self.screen.blit(exit_button.image, exit_button.rect)
             self.screen.blit(character_button.image, character_button.rect)
             self.screen.blit(inventory_button.image, inventory_button.rect)

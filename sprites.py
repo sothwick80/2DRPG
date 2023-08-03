@@ -111,10 +111,9 @@ class Player(pygame.sprite.Sprite):
                 self.y_change += PLAYER_SPEED
                 self.facing = 'down'
             if keys[pygame.K_i]:
-                #save current zone
-                
-                self.game.createTilemap(MENU)
-                #self.game.menu()
+                #save current zone             
+                #self.game.createTilemap(MENU)
+                self.game.menu()
 
     def collide_zoneline(self):
         hits = pygame.sprite.spritecollide(self, self.game.zonelines, False)
