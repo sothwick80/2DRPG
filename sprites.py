@@ -402,7 +402,7 @@ class AnimatedSprite(pygame.sprite.Sprite):
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
 
-class BattleMob(pygame.sprite.Sprite):
+class Enemy(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
 
         self.game = game
@@ -419,9 +419,6 @@ class BattleMob(pygame.sprite.Sprite):
         self.y_change = 0
 
         self.facing = random.choice(['left', 'right'])
-        #self.animation_loop = 1
-        #self.movement_loop = 0
-        #self.max_travel = random.randint(7, 30)
 
         self.image = self.game.enemy_spritesheet.get_sprite(3, 2, self.width, self.height)
         self.image.set_colorkey(BLACK)
@@ -430,27 +427,8 @@ class BattleMob(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self. y
 
-        self.lvl = 1
-
-        self.str = 5
-        self.strmod = 0
-        self.vit = 5
-        self.vitmod = 0
-        self.dex = 5
-        self.dexmod = 0
-        self.int = 5
-        self.intmod = 0
-        self.spr = 5
-        self.sprmod = 0
-
-        self.hp = 10
-        self.mp = 10
-        self.init = 0
-
 
     def update(self):
-        #self.movement()
-        #self.animate()
         self.rect.x += self.x_change
         self.rect.y += self.y_change
 

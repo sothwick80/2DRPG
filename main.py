@@ -170,7 +170,7 @@ class Game:
                     if column == ",":
                         StaticSprite(self, j, i, BATTLEMENUBACKX, BATTLEMENUWALLY, BLOCK_LAYER)
                     if column == "E": #create sprite and add to battle list
-                        self.mobs.append(BattleMob(self, j, i))
+                        self.mobs.append(MobSheet(self, j, i))
                     if column == "P":
                         self.party[self.top_character].x = j
                         self.party[self.top_character].y = i
@@ -187,15 +187,12 @@ class Game:
                     if column == "A":
                         StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)       
 
-    #mytimer = pygame.event.custom_type()
-    #pygame.time.set_timer(mytimer, 400)
-
-    #while True:
-    #    for event in pygame.event.get():
-    #       if event.type == mytimer:
-                # Do Something
+#Roll a Natural 20 on the dice.
+#Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
+#If the attack roll from Step 2 is a hit, roll your damage twice and add the result of both rolls together.
+#If the attack roll from Step 2 is a miss, you did not get a crit. However, because you rolled a Natural 20, you still successfully made a normal attack. Roll for damage!
+#Congratulations!(!)
     def checkVitals(self, team):
-        
         if team == PLAYERS:
             isAlive = False
             for i in range(self.party.__len__()):
@@ -220,15 +217,18 @@ class Game:
         temproll = random.randint(1, 20)
         if temproll == 20:
             print ("Natural 20, critical chance!")
+            #roll a crit chance and damage
         elif temproll == 1:
             print ("Natural 1, critical miss!")
+            #miss the enemy
         else:
             print ("Rolled a ", temproll)
-        #if (D20 + self.atkbonus) > mob.ac == HIT!
-        #mob.hp -= strbonus + weapon damage
-        #remember, 20 is always a hit maybe a crit, 1 is always a miss
-        #random.randint(1, 20) # roll a D20
-        mob.hp -= 1
+            if (temproll + self.party[0].atkbonus) > mob.ac:
+                #random the damage die for the weapon
+                temproll2 = random.randint(1,self.party[0].gear[PRIMARY].atk)
+                # show damage being done to mob
+                print("Player does", temproll2 + self.party[0].atkbonus, "damage")
+                mob.hp -=  temproll2 + self.party[0].atkbonus + self.party[0].strmod
 
     def mobAttack(self, player):
         for i in range(self.mobs.__len__()):
@@ -239,9 +239,13 @@ class Game:
             elif temproll == 1:
                 print ("Enemy Natural 1, critical miss!")
             else:
-                print ("Enemy Rolled a ", temproll)
-            #each mob does 1 damage to player
-            player.hp -= 1
+                print ("Rolled a ", temproll)
+                if (temproll + self.mobs[i].atkbonus) > player.ac:
+                    #random the damage die for the weapon
+                    temproll2 = random.randint(1,self.party[0].gear[PRIMARY].atk)
+                    # show damage being done to mob
+                    print("Player does", temproll2 + self.party[0].atkbonus, "damage")
+                    player.hp -=  temproll2 + self.party[0].atkbonus + self.party[0].strmod
     
     def endBattle(self):
         #stop timers

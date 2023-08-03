@@ -20,12 +20,15 @@ class CharacterSheet(Player):
         self.int = self.intmod = 0
         #spirit governs mana points, mana regen
         self.spr = self.sprmod = 0
-
+        self.atkbonus = 0
         self.hp = self.mp = self.init = 0
-
+        self.ac = 10 + self.dexmod #+ gear
         #inventory starts at 1, not 0 --- WHY??????
         self.inventory = [NUMOFINVENTORYSLOTS]
         self.gear = [NUMBEROFGEARSLOTS]
+
+        #give a sword to pretend battle
+        self.gear[PRIMARY] = Item(SWORD)
 
     #any time gear is equipped, unequipped, debuffs, buffs, etc
     def calculate_stats(self):
@@ -35,11 +38,41 @@ class CharacterSheet(Player):
     def skill_ability(self):
         pass
 
-    def get_attack(self):
-        pass
+class MobSheet(Enemy):
+    def __init__(self, game, x, y):
+        Enemy.__init__(self, game, x, y)
+        
+        self.lvl = 1
 
-    def get_defend(self):
-        pass
+        self.str = 5
+        self.strmod = 0
+        self.vit = 5
+        self.vitmod = 0
+        self.dex = 5
+        self.dexmod = 0
+        self.int = 5
+        self.intmod = 0
+        self.spr = 5
+        self.sprmod = 0
+
+        self.hp = 10
+        self.ac = 10 + self.dexmod #+ gear ac
+        self.mp = 10
+        self.init = 0
+
+        self.atkbonus = 0
+
+        #inventory starts at 1, not 0 --- WHY??????
+        self.inventory = [1] #mob drops an item
+        self.coin = random.randint(1, 10) #mob has 1-10 gold
+
+        self.gear = [NUMBEROFGEARSLOTS]
+
+        #give a sword to pretend battle
+        self.gear[PRIMARY] = Item(SWORD)
+
+
+
 
 #Body of the items in inventory
 class Item():
@@ -51,6 +84,7 @@ class Item():
         self.effect = 0 #if item has an effect
         self.atk = 0
         self.ac = 0
+        self.value = 0
         
         if itemid == POTION:
             self.name = "Potion of Minor Relief" #name of the item
@@ -62,7 +96,7 @@ class Item():
             self.name = "Rusty Sword" #name of the item
             self.description = "Barely a sword." #description of item
             self.equip = True #if equippable, if not put in inventory directly
-            self.atk = 5
+            self.atk = 4 #attack die associated
 
 #an interactible, impassible block that holds the ID of an item which is then created in the inventory
 class ItemBlock(StaticSprite):
