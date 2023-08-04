@@ -362,7 +362,13 @@ class Game:
             self.draw()
 
     def menu(self):
-        self.inmenu = True
+        
+        #empty the sprite groups
+        self.all_sprites.empty()
+        self.blocks.empty()
+        self.enemies.empty()
+        self.zonelines.empty()
+
         exit_button = Button(20, 25, 90, 30, WHITE, BLACK, 'Back', 32)
         character_button = Button(130, 25, 180, 30, WHITE, BLACK, 'Character', 32)
         inventory_button = Button(320, 25, 180, 30, WHITE, BLACK, 'Inventory', 32)
@@ -370,7 +376,10 @@ class Game:
          #save current zone
 
         self.createTilemap(MENU)
-
+        #force draw new sprites
+        self.draw()
+        self.update()
+        
         while self.inmenu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -382,6 +391,16 @@ class Game:
 
             if exit_button.is_pressed(mouse_pos, mouse_pressed):    
                 self.inmenu = False
+                #empty the sprite groups
+                self.all_sprites.empty()
+                self.blocks.empty()
+                self.enemies.empty()
+                self.zonelines.empty()
+                #re-add player to all_sprites group
+                self.all_sprites.add(self.playersprite)
+                #go back to zone
+                self.createTilemap(self.current_zone.id)
+
             #elif 
             #self.screen.blit(self.menu_background, (0, 0))
             self.screen.blit(exit_button.image, exit_button.rect)

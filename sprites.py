@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         self.y_change = 0
         self.facing = 'down'
         self.animation_loop = 1
-        
+
         self.image = self.game.character_spritesheet.get_sprite(3, 2, self.width, self.height)
 
         self.rect = self.image.get_rect()
@@ -111,8 +111,7 @@ class Player(pygame.sprite.Sprite):
                 self.y_change += PLAYER_SPEED
                 self.facing = 'down'
             if keys[pygame.K_i]:
-                #save current zone             
-                #self.game.createTilemap(MENU)
+                self.game.inmenu = True
                 self.game.menu()
 
     def collide_zoneline(self):
