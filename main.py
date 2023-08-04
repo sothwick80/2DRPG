@@ -31,7 +31,8 @@ class Game:
 
         #LIST OF BATTLE ENEMIES
         self.mobs = []
-
+        #list of menu boxes
+        self.menuboxes = []
         #list of dialog NPCs in the current zone, empty and reload when zoning
         self.dialognpc = []
         #list of items in chests or available for PU in the zone, empty and reload when zoning
@@ -177,7 +178,9 @@ class Game:
                 for j, column in enumerate(row):
                     StaticSprite(self, j, i, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
                     if column == "A":
-                        StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)       
+                        StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)
+                    if column == "F":
+                        self.menuboxes.append(StaticSprite(self, j, i, 0, 32, TEXT_LAYER))
 
 #Roll a Natural 20 on the dice.
 #Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
@@ -270,6 +273,27 @@ class Game:
                 self.playing = False
                 self.running = False
 
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                print ("Searching Boxes")
+                if self.inmenu:
+                    mouse_pos = pygame.mouse.get_pos()
+                    i = 0
+                    while i < self.menuboxes.__len__():
+                        
+                        #if hitting the exit button
+                        if i == 0 and self.menuboxes[i].rect.collidepoint(mouse_pos):
+                            self.inmenu = False
+                            #empty the sprite groups
+                            self.all_sprites.empty()
+                            self.blocks.empty()
+                            self.text.empty()
+                            self.menuboxes.clear()
+                            #re-add player to all_sprites group
+                            self.all_sprites.add(self.playersprite)
+                            #go back to zone
+                            self.createTilemap(self.current_zone.id)
+                        i += 1
+
             elif event.type == self.mobtimer:
                 self.mobAttack(self.party[self.top_character])
                 self.checkVitals(PLAYERS)
@@ -361,54 +385,64 @@ class Game:
             self.update()
             self.draw()
 
-    def menu(self):
-        
+    def menu(self):       
         #empty the sprite groups
         self.all_sprites.empty()
         self.blocks.empty()
         self.enemies.empty()
         self.zonelines.empty()
 
-        exit_button = Button(20, 25, 90, 30, WHITE, BLACK, 'Back', 32)
-        character_button = Button(130, 25, 180, 30, WHITE, BLACK, 'Character', 32)
-        inventory_button = Button(320, 25, 180, 30, WHITE, BLACK, 'Inventory', 32)
-        quest_button = Button(520, 25, 150, 30, WHITE, BLACK, 'Quests', 32)
-         #save current zone
-
         self.createTilemap(MENU)
         #force draw new sprites
         self.draw()
         self.update()
-        
-        while self.inmenu:
+
+        '''while self.inmenu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.running = False #quits to another screen
                     self.inmenu = False
+                    self.running = False #quits to another screen
+                elif event.type == pygame.mouse.get_pressed():
+                    mouse_pos = pygame.mouse.get_pos()
+                    i = 0
+                    while i < self.menuboxes.__len__():
+                        print ("Searching Boxes")
+                        #if hitting the exit button
+                        if i == 0 and self.menuboxes[i].rect.collidepoint(mouse_pos):
+                            self.inmenu = False
+                            #empty the sprite groups
+                            self.all_sprites.empty()
+                            self.blocks.empty()
+                            self.text.empty()
+                            self.menuboxes.clear()
+                            #re-add player to all_sprites group
+                            self.all_sprites.add(self.playersprite)
+                            #go back to zone
+                            self.createTilemap(self.current_zone.id)'''
+            #mouse_pos = pygame.mouse.get_pos()
+            #mouse_pressed = pygame.mouse.get_pressed()
 
-            mouse_pos = pygame.mouse.get_pos()
-            mouse_pressed = pygame.mouse.get_pressed()
-
-            if exit_button.is_pressed(mouse_pos, mouse_pressed):    
-                self.inmenu = False
+            #if exit_button.is_pressed(mouse_pos, mouse_pressed):    
+                #self.inmenu = False
                 #empty the sprite groups
-                self.all_sprites.empty()
-                self.blocks.empty()
-                self.enemies.empty()
-                self.zonelines.empty()
+                #self.all_sprites.empty()
+                #self.blocks.empty()
+                #self.text.empty()
+                #self.menuboxes.clear()
                 #re-add player to all_sprites group
-                self.all_sprites.add(self.playersprite)
+               # self.all_sprites.add(self.playersprite)
                 #go back to zone
-                self.createTilemap(self.current_zone.id)
+                #self.createTilemap(self.current_zone.id)
 
+            
             #elif 
             #self.screen.blit(self.menu_background, (0, 0))
-            self.screen.blit(exit_button.image, exit_button.rect)
-            self.screen.blit(character_button.image, character_button.rect)
-            self.screen.blit(inventory_button.image, inventory_button.rect)
-            self.screen.blit(quest_button.image, quest_button.rect)
-            self.clock.tick(FPS)
-            pygame.display.update()
+            #self.screen.blit(exit_button.image, exit_button.rect)
+            #self.screen.blit(character_button.image, character_button.rect)
+            #self.screen.blit(inventory_button.image, inventory_button.rect)
+            #self.screen.blit(quest_button.image, quest_button.rect)
+            #self.clock.tick(FPS)
+        #pygame.display.update()
 
     def game_over(self):
         text = self.font.render('Game Over', True, WHITE)
