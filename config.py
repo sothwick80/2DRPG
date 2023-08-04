@@ -170,9 +170,42 @@ BATTLEMENUWALLY = 0
 BATTLEMENUBACKX = 192
 BATTLEMENUBACKY = 128
 
-MENU = [
+MAINMENU = [
 'AAAAAAAAAAAAAAAAAAAAAAAAA',
-'AF...F..................A',
+'AF...G...H..............A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'AAAAAAAAAAAAAAAAAAAAAAAAA',
+'A.......................A',
+'A.......................A',
+'A.......................A',
+'AAAAAAAAAAAAAAAAAAAAAAAAA',
+]
+
+EXIT = 0
+CHARACTER = 1
+INVENTORY = 2
+
+EXITBUTTONX = 0
+EXITBUTTONY = 32
+CHARACTERBUTTONX = 101
+CHARACTERBUTTONY = 32
+SPELLSBUTTONX = 199
+SPELLSBUTTONY = 32
+
+CHARACTERMENU = [
+'AAAAAAAAAAAAAAAAAAAAAAAAA',
+'AF...G...H..............A',
 'A.......................A',
 'A.......................A',
 'A.......................A',

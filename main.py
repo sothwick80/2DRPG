@@ -38,7 +38,9 @@ class Game:
         #list of items in chests or available for PU in the zone, empty and reload when zoning
         self.items = []
 
-        #
+        #keep last zone for inmenu
+        self.lastzone = 0
+
         #set battle timers
         self.playertimer = pygame.event.custom_type()
         self.mobtimer = pygame.event.custom_type()
@@ -168,7 +170,7 @@ class Game:
                         self.party[self.top_character].x = j
                         self.party[self.top_character].y = i
         
-        elif map == MENU:
+        elif map == MAINMENU:
             #empty the sprite groups
             self.all_sprites.empty()
             self.blocks.empty()
@@ -180,7 +182,30 @@ class Game:
                     if column == "A":
                         StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)
                     if column == "F":
-                        self.menuboxes.append(StaticSprite(self, j, i, 0, 32, TEXT_LAYER))
+                        self.menuboxes.append(StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, TEXT_LAYER))
+                    if column == "G":
+                        self.menuboxes.append(StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, TEXT_LAYER))
+                    if column == "H":
+                        self.menuboxes.append(StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER))
+        
+        elif map == CHARACTERMENU:
+            #empty the sprite groups
+            self.all_sprites.empty()
+            self.blocks.empty()
+            self.text.empty()
+            self.menuboxes.clear()
+
+            for i, row in enumerate(map):
+                for j, column in enumerate(row):
+                    StaticSprite(self, j, i, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
+                    if column == "A":
+                        StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)
+                    if column == "F":
+                        self.menuboxes.append(StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, TEXT_LAYER))
+                    if column == "G":
+                        self.menuboxes.append(StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, TEXT_LAYER))
+                    if column == "H":
+                        self.menuboxes.append(StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER))
 
 #Roll a Natural 20 on the dice.
 #Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
@@ -281,7 +306,7 @@ class Game:
                     while i < self.menuboxes.__len__():
                         
                         #if hitting the exit button
-                        if i == 0 and self.menuboxes[i].rect.collidepoint(mouse_pos):
+                        if i == EXIT and self.menuboxes[i].rect.collidepoint(mouse_pos):
                             self.inmenu = False
                             #empty the sprite groups
                             self.all_sprites.empty()
@@ -291,7 +316,10 @@ class Game:
                             #re-add player to all_sprites group
                             self.all_sprites.add(self.playersprite)
                             #go back to zone
+                            self.current_zone.id = self.lastzone
                             self.createTilemap(self.current_zone.id)
+                        elif i == CHARACTER and self.menuboxes[i].rect.collidepoint(mouse_pos):
+                            self.createTilemap(CHARACTERMENU)
                         i += 1
 
             elif event.type == self.mobtimer:
@@ -386,13 +414,14 @@ class Game:
             self.draw()
 
     def menu(self):       
+        self.lastzone = self.current_zone.id
         #empty the sprite groups
         self.all_sprites.empty()
         self.blocks.empty()
         self.enemies.empty()
         self.zonelines.empty()
 
-        self.createTilemap(MENU)
+        self.createTilemap(MAINMENU)
         #force draw new sprites
         self.draw()
         self.update()
