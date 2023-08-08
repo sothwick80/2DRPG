@@ -23,9 +23,20 @@ class CharacterSheet(Player):
         self.atkbonus = 0
         self.hp = self.mp = self.init = 0
         self.ac = 10 + self.dexmod #+ gear
-        #inventory starts at 1, not 0 --- WHY??????
-        self.inventory = [NUMOFINVENTORYSLOTS]
-        self.gear = [NUMBEROFGEARSLOTS]
+        
+        self.inventory = []
+        self.gear = []
+
+        #INITIALIZE LISTS inventory starts at 1
+        self.temp = 1
+        while self.temp < NUMOFINVENTORYSLOTS:
+            self.inventory.append(Item(SWORD))
+            self.temp += 1
+        
+        self.temp = 1
+        while self.temp < NUMOFGEARSLOTS:
+            self.gear.append(Item(SWORD))
+            self.temp += 1
 
         #give a sword to pretend battle
         self.gear[PRIMARY] = Item(SWORD)
@@ -66,7 +77,7 @@ class MobSheet(Enemy):
         self.inventory = [1] #mob drops an item
         self.coin = random.randint(1, 10) #mob has 1-10 gold
 
-        self.gear = [NUMBEROFGEARSLOTS]
+        self.gear = [NUMOFGEARSLOTS]
 
         #give a sword to pretend battle
         self.gear[PRIMARY] = Item(SWORD)

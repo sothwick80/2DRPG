@@ -31,8 +31,10 @@ class Game:
 
         #LIST OF BATTLE ENEMIES
         self.mobs = []
-        #list of menu boxes
+
+        #list of CLICKABLE MENU SPRITES
         self.menuboxes = []
+
         #list of dialog NPCs in the current zone, empty and reload when zoning
         self.dialognpc = []
         #list of items in chests or available for PU in the zone, empty and reload when zoning
@@ -85,13 +87,13 @@ class Game:
         #self.party.append(Player(self, 10, 10))
         self.party.append(CharacterSheet(self, 10, 10))
         self.createTilemap(self.current_zone.id)
-
+        
         #DIALOG
         self.in_dialog = False
         #save values from hit NPC
         self.dialogindex = -1
         self.dialoglength = -1
-        #new game, show first dialogs
+        
 
     def showDialog(self, dialog):
         tempx = 1
@@ -176,11 +178,38 @@ class Game:
             self.blocks.empty()
             self.enemies.empty()
             self.zonelines.empty()
+            #initialize clickable sprite gear list
+            self.temp = 1
+            while self.temp < NUMOFMENUITEMS:
+                self.menuboxes.append(StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER))
+                self.temp += 1
+
+            print ("Length is ", self.menuboxes.__len__())
             for i, row in enumerate(map):
                 for j, column in enumerate(row):
                     StaticSprite(self, j, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
                     if column == "A":
                         StaticSprite(self, j, i, MAINMENUWALLX, MAINMENUWALLY, BLOCK_LAYER)
+                    ## THESE CLICKABLE SPRITES HAVE TO BE PUT INTO THE MAP IN A SPECIFIC ORDER FOR COLLISION
+                    if column == "E":
+                        self.menuboxes[EXIT] = StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, TEXT_LAYER)
+                    if column == "G":
+                        self.menuboxes[CHARACTER] = StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, TEXT_LAYER)
+                    if column == "Q":
+                        self.menuboxes[SPELLS] = StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER)
+                       
+        elif map == CHARACTERMENU:
+            #empty the sprite groups
+            self.all_sprites.empty()
+            self.blocks.empty()
+            self.text.empty()
+            #self.menuboxes.clear()
+            for i, row in enumerate(map):
+                for j, column in enumerate(row):
+                    StaticSprite(self, j, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
+                    if column == "A":
+                        StaticSprite(self, j, i, MAINMENUWALLX, MAINMENUWALLY, BLOCK_LAYER)
+                    ## THESE CLICKABLE SPRITES HAVE TO BE PUT INTO THE MAP IN A SPECIFIC ORDER FOR COLLISION
                     if column == "E":
                         self.menuboxes.append(StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, TEXT_LAYER))
                     if column == "G":
@@ -201,26 +230,6 @@ class Game:
                         StaticSprite(self, j, i, PRIMARYSLOTX, PRIMARYSLOTY, GEAR_LAYER)
                     if column == "S":
                         StaticSprite(self, j, i, SECONDARYSLOTX, SECONDARYSLOTY, GEAR_LAYER)
-
-        
-        elif map == CHARACTERMENU:
-            #empty the sprite groups
-            self.all_sprites.empty()
-            self.blocks.empty()
-            self.text.empty()
-            self.menuboxes.clear()
-
-            for i, row in enumerate(map):
-                for j, column in enumerate(row):
-                    StaticSprite(self, j, i, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
-                    if column == "A":
-                        StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)
-                    if column == "F":
-                        self.menuboxes.append(StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, TEXT_LAYER))
-                    if column == "G":
-                        self.menuboxes.append(StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, TEXT_LAYER))
-                    if column == "H":
-                        self.menuboxes.append(StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER))
 
 #Roll a Natural 20 on the dice.
 #Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
@@ -319,22 +328,23 @@ class Game:
                     mouse_pos = pygame.mouse.get_pos()
                     i = 0
                     while i < self.menuboxes.__len__():
-                        
-                        #if hitting the exit button
-                        if i == EXIT and self.menuboxes[i].rect.collidepoint(mouse_pos):
-                            self.inmenu = False
-                            #empty the sprite groups
-                            self.all_sprites.empty()
-                            self.blocks.empty()
-                            self.text.empty()
-                            self.menuboxes.clear()
-                            #re-add player to all_sprites group
-                            self.all_sprites.add(self.playersprite)
-                            #go back to zone
-                            self.current_zone.id = self.lastzone
-                            self.createTilemap(self.current_zone.id)
-                        elif i == CHARACTER and self.menuboxes[i].rect.collidepoint(mouse_pos):
-                            self.createTilemap(CHARACTERMENU)
+                        if self.menuboxes[i].rect.collidepoint(mouse_pos):
+                            #if hitting the exit button
+                            if i == EXIT:
+                                self.inmenu = False
+                                #empty the sprite groups
+                                self.all_sprites.empty()
+                                self.blocks.empty()
+                                self.text.empty()
+                                self.menuboxes.clear()
+                                #re-add player to all_sprites group
+                                self.all_sprites.add(self.playersprite)
+                                #go back to zone
+                                self.current_zone.id = self.lastzone
+                                self.createTilemap(self.current_zone.id)
+                            elif i == CHARACTER:
+                                self.createTilemap(CHARACTERMENU)
+                        #else: #clicked a gear slot, not put pic on cursor
                         i += 1
 
             elif event.type == self.mobtimer:
@@ -440,53 +450,6 @@ class Game:
         #force draw new sprites
         self.draw()
         self.update()
-
-        '''while self.inmenu:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.inmenu = False
-                    self.running = False #quits to another screen
-                elif event.type == pygame.mouse.get_pressed():
-                    mouse_pos = pygame.mouse.get_pos()
-                    i = 0
-                    while i < self.menuboxes.__len__():
-                        print ("Searching Boxes")
-                        #if hitting the exit button
-                        if i == 0 and self.menuboxes[i].rect.collidepoint(mouse_pos):
-                            self.inmenu = False
-                            #empty the sprite groups
-                            self.all_sprites.empty()
-                            self.blocks.empty()
-                            self.text.empty()
-                            self.menuboxes.clear()
-                            #re-add player to all_sprites group
-                            self.all_sprites.add(self.playersprite)
-                            #go back to zone
-                            self.createTilemap(self.current_zone.id)'''
-            #mouse_pos = pygame.mouse.get_pos()
-            #mouse_pressed = pygame.mouse.get_pressed()
-
-            #if exit_button.is_pressed(mouse_pos, mouse_pressed):    
-                #self.inmenu = False
-                #empty the sprite groups
-                #self.all_sprites.empty()
-                #self.blocks.empty()
-                #self.text.empty()
-                #self.menuboxes.clear()
-                #re-add player to all_sprites group
-               # self.all_sprites.add(self.playersprite)
-                #go back to zone
-                #self.createTilemap(self.current_zone.id)
-
-            
-            #elif 
-            #self.screen.blit(self.menu_background, (0, 0))
-            #self.screen.blit(exit_button.image, exit_button.rect)
-            #self.screen.blit(character_button.image, character_button.rect)
-            #self.screen.blit(inventory_button.image, inventory_button.rect)
-            #self.screen.blit(quest_button.image, quest_button.rect)
-            #self.clock.tick(FPS)
-        #pygame.display.update()
 
     def game_over(self):
         text = self.font.render('Game Over', True, WHITE)
