@@ -505,9 +505,12 @@ class StaticSprite(pygame.sprite.Sprite):
         #characters of text for dialog
         elif layer == TEXT_LAYER: ## make into spritesheet for dialog
             self.groups = self.game.all_sprites, self.game.text
-            self.width = 98
-            self.height = 60
-            self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 100, 95)
+            #self.width = 98
+            #self.height = 60
+            self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 100, 85)
+        elif layer == GEAR_LAYER:
+            self.groups = self.game.all_sprites, self.game.text
+            self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 40, 47)
         elif layer == DIALOGNPC_LAYER: 
             self.groups = self.game.all_sprites, self.game.blocks#, self.game.dialognpc - can I use hasdialog flag??
             self.image = self.game.enemy_spritesheet.get_sprite(ENEMYX, ENEMYY, self.width, self.height)

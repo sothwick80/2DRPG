@@ -178,15 +178,30 @@ class Game:
             self.zonelines.empty()
             for i, row in enumerate(map):
                 for j, column in enumerate(row):
-                    StaticSprite(self, j, i, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
+                    StaticSprite(self, j, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
                     if column == "A":
-                        StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)
-                    if column == "F":
+                        StaticSprite(self, j, i, MAINMENUWALLX, MAINMENUWALLY, BLOCK_LAYER)
+                    if column == "E":
                         self.menuboxes.append(StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, TEXT_LAYER))
                     if column == "G":
                         self.menuboxes.append(StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, TEXT_LAYER))
-                    if column == "H":
+                    if column == "Q":
                         self.menuboxes.append(StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER))
+                    if column == "H":
+                        StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, GEAR_LAYER)
+                    if column == "C":
+                        StaticSprite(self, j, i, CHESTSLOTX, CHESTSLOTY, GEAR_LAYER)
+                    if column == "R":
+                        StaticSprite(self, j, i, ARMSSLOTX, ARMSSLOTY, GEAR_LAYER)
+                    if column == "L":
+                        StaticSprite(self, j, i, LEGSSLOTX, LEGSSLOTY, GEAR_LAYER)
+                    if column == "F":
+                        StaticSprite(self, j, i, FEETSLOTX, FEETSLOTY, GEAR_LAYER)
+                    if column == "P":
+                        StaticSprite(self, j, i, PRIMARYSLOTX, PRIMARYSLOTY, GEAR_LAYER)
+                    if column == "S":
+                        StaticSprite(self, j, i, SECONDARYSLOTX, SECONDARYSLOTY, GEAR_LAYER)
+
         
         elif map == CHARACTERMENU:
             #empty the sprite groups

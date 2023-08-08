@@ -5,6 +5,7 @@ WIN_HEIGHT = 600
 TILESIZE = 32
 FPS = 60
 
+GEAR_LAYER = 9 #NOT DRAWN ON THIS LAYER, JUST USED IN SPRITE FOR CONFIG
 DIALOGNPC_LAYER = 8
 TEXT_LAYER = 7
 ZONE_LAYER = 6
@@ -35,9 +36,12 @@ PRIMARY = 0
 SECONDARY = 1
 HEAD = 2
 CHEST = 3
-HANDS = 4
+ARMS = 4
 LEGS = 5
 FEET = 6
+
+
+
 
 ## ITEM DEFINES ##
 POTION = 1
@@ -172,16 +176,16 @@ BATTLEMENUBACKY = 128
 
 MAINMENU = [
 'AAAAAAAAAAAAAAAAAAAAAAAAA',
-'AF...G...H..............A',
+'AE...G...Q..............A',
 'A.......................A',
 'A.......................A',
+'A..........H............A',
 'A.......................A',
+'A.......C.....R.........A',
 'A.......................A',
+'A....L...........F......A',
 'A.......................A',
-'A.......................A',
-'A.......................A',
-'A.......................A',
-'A.......................A',
+'A.......P.....S.........A',
 'A.......................A',
 'A.......................A',
 'A.......................A',
@@ -191,6 +195,20 @@ MAINMENU = [
 'A.......................A',
 'AAAAAAAAAAAAAAAAAAAAAAAAA',
 ]
+
+MAINMENUWALLX = 512
+MAINMENUWALLY = 0
+MAINMENUGROUNDX = 480
+MAINMENUGROUNDY = 64
+
+PRIMARYSLOTX = 0
+PRIMARYSLOTY = SECONDARYSLOTY = HEADSLOTY = CHESTSLOTY = ARMSSLOTY = LEGSSLOTY = FEETSLOTY = 120
+SECONDARYSLOTX = 41
+HEADSLOTX = 82
+CHESTSLOTX = 123
+ARMSSLOTX = 164
+LEGSSLOTX = 205
+FEETSLOTX = 246
 
 EXIT = 0
 CHARACTER = 1
