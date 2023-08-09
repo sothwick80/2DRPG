@@ -350,18 +350,25 @@ class Game:
                                 self.createTilemap(self.current_zone.id)
                             elif i == CHARACTER:
                                 self.createTilemap(CHARACTERMENU)
+                            elif i == ARMS:
+                                print("Picking Up - Arms")
                             elif i == HEAD:
                                 if not self.oncursor:
                                     print ("Picking Up - Head Slot")
                                     self.oncursor = True
                                     pygame.mouse.set_visible(False) 
-                                #PUT PIC OF HEAD SLOT ON CURSOR
+                                    #get mouse pos for cursor sprite
                                     tempcoord = pygame.mouse.get_pos()
                                     self.menuboxes[CURSOR] = StaticSprite(self, tempcoord[0], tempcoord[1], HEADSLOTX, HEADSLOTY, GEAR_LAYER)
                                     #self.cursor_img_rect = self.menuboxes[HEAD].get_rect()
                                 #while self.oncursor
                                     #cursor_img_rect.center = pygame.mouse.get_pos()  # update position 
-                        #else: #clicked a gear slot, not put pic on cursor
+                                else:
+                                    print("Dropping Into Head Slot")
+                                    self.menuboxes[CURSOR].kill()
+                                    self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
+                                    pygame.mouse.set_visible(True)
+                                    self.oncursor = False
                         i += 1
 
             elif event.type == self.mobtimer:
@@ -440,8 +447,10 @@ class Game:
                         self.showDialog("kill")
                    
     def update(self):
+        #if there's something on the cursor, update to the mouse position
+        #must grab rect.center or will get tuple error
         if self.oncursor:
-            self.menuboxes[CURSOR].rect = pygame.mouse.get_pos()
+            self.menuboxes[CURSOR].rect.center = pygame.mouse.get_pos()
         self.all_sprites.update()
         
 
