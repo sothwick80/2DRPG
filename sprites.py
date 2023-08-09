@@ -495,7 +495,7 @@ class StaticSprite(pygame.sprite.Sprite):
         self.height = TILESIZE
 
         #impassible by player
-        if layer == BLOCK_LAYER:
+        if layer == BLOCK_LAYER: #all_sprites for display, blocks for collision
             self.groups = self.game.all_sprites, self.game.blocks
             self.image = self.game.temp_spritesheet.get_sprite(pixx, pixy, self.width, self.height)
         #transport player to connected zone on collision
@@ -527,7 +527,7 @@ class StaticSprite(pygame.sprite.Sprite):
 class TextSprite(pygame.sprite.Sprite):
     def __init__(self, game, x, y, char):
         self.game = game
-        self._layer = TEXT_LAYER
+        #DISPLAY GROUPS
         self.groups = self.game.all_sprites, self.game.text
         
         self.x = x * TILESIZE

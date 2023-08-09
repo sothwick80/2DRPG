@@ -35,6 +35,9 @@ class Game:
         #list of CLICKABLE MENU SPRITES
         self.menuboxes = []
 
+        #if there is a sprite on the cursor
+        self.oncursor = False
+
         #list of dialog NPCs in the current zone, empty and reload when zoning
         self.dialognpc = []
         #list of items in chests or available for PU in the zone, empty and reload when zoning
@@ -70,18 +73,18 @@ class Game:
         self.current_zone.x = FRANTIKSHUTMAXX
         self.current_zone.y = FRANTIKSHUTMAXY
 
-        #drawing layers
+        # ALL SPRITES TO BE DRAWN MUST GO HERE
         self.all_sprites = pygame.sprite.LayeredUpdates()
+        #SPRITES FOR COLLISION AND GROUPING TYPES
         self.playersprite = pygame.sprite.LayeredUpdates()
         self.blocks  = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
-        self.attacks = pygame.sprite.LayeredUpdates()
         self.zonelines = pygame.sprite.LayeredUpdates()
+        #SPRITES FOR GROUPING TYPES TOGETHER
         self.battle = pygame.sprite.LayeredUpdates()
         self.npc = pygame.sprite.LayeredUpdates()
-        #self.dialognpc = pygame.sprite.LayeredUpdates()
         self.text = pygame.sprite.LayeredUpdates()
-        #self.items = pygame.sprite.LayeredUpdates()
+        #self.attacks = pygame.sprite.LayeredUpdates()
 
         #CREATE PLAYER AND ADD TO PARTY
         #self.party.append(Player(self, 10, 10))
@@ -90,18 +93,19 @@ class Game:
         
         #DIALOG
         self.in_dialog = False
-        #save values from hit NPC
+        #save values from COLLIDED NPC
         self.dialogindex = -1
         self.dialoglength = -1
         
 
     def showDialog(self, dialog):
         tempx = 1
-        #get rid of any previous text
+        #ERASE SHOWING TEXT
         for sprite in self.text:
             sprite.kill()
         
-        if dialog == "kill": #if dialog is over
+        #IF DIALOG IS OVER, KILL SPRITES
+        if dialog == "kill":
             self.in_dialog = False
         else:
             for x in dialog:
@@ -209,28 +213,31 @@ class Game:
                     StaticSprite(self, j, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
                     if column == "A":
                         StaticSprite(self, j, i, MAINMENUWALLX, MAINMENUWALLY, BLOCK_LAYER)
-                    ## THESE CLICKABLE SPRITES HAVE TO BE PUT INTO THE MAP IN A SPECIFIC ORDER FOR COLLISION
+                    ## THESE CLICKABLE SPRITES HAVE TO BE PUT INTO THE MAP EACH TIME BC CLEARING SPRITES
                     if column == "E":
-                        self.menuboxes.append(StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, TEXT_LAYER))
+                        self.menuboxes[EXIT] = StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, TEXT_LAYER)
                     if column == "G":
-                        self.menuboxes.append(StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, TEXT_LAYER))
+                        self.menuboxes[CHARACTER] = StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, TEXT_LAYER)
                     if column == "Q":
-                        self.menuboxes.append(StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER))
+                        self.menuboxes[SPELLS] = StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER)
                     if column == "H":
-                        StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, GEAR_LAYER)
+                        self.menuboxes[HEAD] = StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, GEAR_LAYER)
                     if column == "C":
-                        StaticSprite(self, j, i, CHESTSLOTX, CHESTSLOTY, GEAR_LAYER)
+                        self.menuboxes[CHEST] = StaticSprite(self, j, i, CHESTSLOTX, CHESTSLOTY, GEAR_LAYER)
                     if column == "R":
-                        StaticSprite(self, j, i, ARMSSLOTX, ARMSSLOTY, GEAR_LAYER)
+                        self.menuboxes[ARMS] = StaticSprite(self, j, i, ARMSSLOTX, ARMSSLOTY, GEAR_LAYER)
                     if column == "L":
-                        StaticSprite(self, j, i, LEGSSLOTX, LEGSSLOTY, GEAR_LAYER)
+                        self.menuboxes[LEGS] = StaticSprite(self, j, i, LEGSSLOTX, LEGSSLOTY, GEAR_LAYER)
                     if column == "F":
-                        StaticSprite(self, j, i, FEETSLOTX, FEETSLOTY, GEAR_LAYER)
+                        self.menuboxes[FEET] = StaticSprite(self, j, i, FEETSLOTX, FEETSLOTY, GEAR_LAYER)
                     if column == "P":
-                        StaticSprite(self, j, i, PRIMARYSLOTX, PRIMARYSLOTY, GEAR_LAYER)
+                        self.menuboxes[PRIMARY] = StaticSprite(self, j, i, PRIMARYSLOTX, PRIMARYSLOTY, GEAR_LAYER)
                     if column == "S":
-                        StaticSprite(self, j, i, SECONDARYSLOTX, SECONDARYSLOTY, GEAR_LAYER)
-
+                       self.menuboxes[SECONDARY] = StaticSprite(self, j, i, SECONDARYSLOTX, SECONDARYSLOTY, GEAR_LAYER)
+                    if column == "U":
+                        self.menuboxes[SHIFTLEFT] = StaticSprite(self, j, i, SHIFTLEFTX, SHIFTLEFTY, GEAR_LAYER)
+                    if column == "Z":
+                       self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, SHIFTRIGHTX, SHIFTRIGHTY, GEAR_LAYER)
 #Roll a Natural 20 on the dice.
 #Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
 #If the attack roll from Step 2 is a hit, roll your damage twice and add the result of both rolls together.
@@ -323,10 +330,9 @@ class Game:
                 self.running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                print ("Searching Boxes")
                 if self.inmenu:
                     mouse_pos = pygame.mouse.get_pos()
-                    i = 0
+                    i = 1
                     while i < self.menuboxes.__len__():
                         if self.menuboxes[i].rect.collidepoint(mouse_pos):
                             #if hitting the exit button
@@ -344,6 +350,17 @@ class Game:
                                 self.createTilemap(self.current_zone.id)
                             elif i == CHARACTER:
                                 self.createTilemap(CHARACTERMENU)
+                            elif i == HEAD:
+                                if not self.oncursor:
+                                    print ("Picking Up - Head Slot")
+                                    self.oncursor = True
+                                    pygame.mouse.set_visible(False) 
+                                #PUT PIC OF HEAD SLOT ON CURSOR
+                                    tempcoord = pygame.mouse.get_pos()
+                                    self.menuboxes[CURSOR] = StaticSprite(self, tempcoord[0], tempcoord[1], HEADSLOTX, HEADSLOTY, GEAR_LAYER)
+                                    #self.cursor_img_rect = self.menuboxes[HEAD].get_rect()
+                                #while self.oncursor
+                                    #cursor_img_rect.center = pygame.mouse.get_pos()  # update position 
                         #else: #clicked a gear slot, not put pic on cursor
                         i += 1
 
@@ -423,7 +440,10 @@ class Game:
                         self.showDialog("kill")
                    
     def update(self):
+        if self.oncursor:
+            self.menuboxes[CURSOR].rect = pygame.mouse.get_pos()
         self.all_sprites.update()
+        
 
     def draw(self):
         self.screen.fill(BLACK)
