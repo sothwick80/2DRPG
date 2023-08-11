@@ -151,70 +151,6 @@ class Player(pygame.sprite.Sprite):
             self.game.createTilemap(self.game.current_zone.id)
             self.game.startBattle()
 
-            
-            #pygame.time.delay(250)
-            #while self.game.in_battle:
-            """  
-            #get first round inits
-            for i in range(self.game.mobs.__len__()):
-                    self.game.mobs[i].init = random.randint(1, 20) + self.game.mobs[i].dexmod
-                    print(self.game.mobs[i].init)
-            self.init = random.randint(1, 20) + self.dexmod
-            print(self.init)
-                
-            #until everyone has a turn
-            while self.turns < (self.game.mobs.__len__() + 1):
-            #set everyone's init
-                for i in range(self.game.mobs.__len__()):   #get first init
-                    if self.game.mobs[i].init > self.tempspot:
-                        self.tempspot = i
-
-                #check highest init
-                if self.game.mobs[self.tempspot].init > self.init:
-                    print("Enemy attacks")
-                    self.hp -= 1
-                    self.game.mobs[self.tempspot].init = 0 #make that enemy init 0
-                else:
-                    print ("Player attacks")
-                    #getplayerinput()
-                    pygame.event.wait()
-                    if self.game.battle_input == 1:
-                        self.game.mobs[self.tempspot].hp -= 1
-                        #self.waitingforaction = False
-                        self.game.battle_input = -1
-                    elif self.game.battle_input == 2:
-                        self.game.mobs[self.tempspot].hp -= 5
-                        #self.waitingforaction = False
-                        self.game.battle_input = -1
-                        
-                    self.init = 0
-
-
-                if self.hp <= 0:
-                    print("You Die!")
-                    self.game.in_battle = False
-                    self.turns += 100 #if you're dead, end the round
-                elif self.game.mobs[self.tempspot].hp <= 0:
-                    print("You killed an enemy!")
-                    self.game.in_battle = False
-                    for i in range(self.game.mobs.__len__()):   
-                        if self.game.mobs[i].hp > 0:
-                            self.game.in_battle = True
-                            print("still some to kill")
-                #any enemies left alive?  keep battle going
-                self.turns += 1
-
-            self.turns = 0
-            print ("Round over")
-            #self.inbattle = False
-             
-            self.game.battle.empty()
-            self.game.all_sprites.empty()
-            self.game.all_sprites.add(self.game.playersprite)
-            self.game.current_zone.id = KELETHINMAIN
-            self.game.createTilemap(self.game.current_zone.id)
-            """
-
     def collide_blocks(self, direction):
         if direction == 'x':
             hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
@@ -505,10 +441,11 @@ class StaticSprite(pygame.sprite.Sprite):
         #characters of text for dialog
         elif layer == TEXT_LAYER: ## make into spritesheet for dialog
             self.groups = self.game.all_sprites, self.game.text
-            #self.width = 98
-            #self.height = 60
+            #100, 85 IS SIZE OF LETTERS
             self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 100, 85)
         elif layer == GEAR_LAYER:
+            #40, 47 IS SIZE OF SLOTS
+            #THIS WILL NEED TO GRAB FROM GEAR SHEET, NOT TEXT SHEET EVENTUALLY
             self.groups = self.game.all_sprites, self.game.text
             self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 40, 47)
         elif layer == DIALOGNPC_LAYER: 

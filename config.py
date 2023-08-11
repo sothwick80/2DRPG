@@ -156,11 +156,11 @@ KELETHINBATTLE = [
 'A.......................A',
 'A.......................A',
 'A.................P.....A',
-'A...E...................A',
+'A.......................A',
 'A.......................A',
 'A...E...................A',
 'A.......................A',
-'A...E...................A',
+'A.......................A',
 'A.......................A',
 'A.......................A',
 'BBBBBBBBBBBBBBBBBBBBBBBBB',
@@ -199,7 +199,7 @@ CHARACTERMENU = [
 'A.......................A',
 'AAAAAAAAAAAAAAAAAAAAAAAAA',
 'A.......................A',
-'A.Z...................U.A',
+'A.ZV.V.V..............U.A',
 'A.......................A',
 'AAAAAAAAAAAAAAAAAAAAAAAAA',
 ]
@@ -212,6 +212,7 @@ MAINMENUGROUNDY = 64
 #COORDS FOR CLICKALE MEU SPRITES
 PRIMARYSLOTX = 0
 PRIMARYSLOTY = SECONDARYSLOTY = HEADSLOTY = CHESTSLOTY = ARMSSLOTY = LEGSSLOTY = FEETSLOTY = SHIFTLEFTY = SHIFTRIGHTY = 120
+BLANKSLOTY = POINTERY = 120
 SECONDARYSLOTX = 41
 HEADSLOTX = 82
 CHESTSLOTX = 123
@@ -220,6 +221,8 @@ LEGSSLOTX = 205
 FEETSLOTX = 246
 SHIFTLEFTX = 287
 SHIFTRIGHTX = 328
+BLANKSLOTX = 370
+POINTERX = 411
 EXITBUTTONX = 0
 EXITBUTTONY = 32
 CHARACTERBUTTONX = 101

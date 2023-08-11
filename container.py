@@ -26,6 +26,7 @@ class CharacterSheet(Player):
         
         self.inventory = []
         self.gear = []
+        self.playertimer = pygame.event.custom_type()
 
         #INITIALIZE LISTS inventory starts at 1
         self.temp = 1
@@ -76,8 +77,12 @@ class MobSheet(Enemy):
         #inventory starts at 1, not 0 --- WHY??????
         self.inventory = [1] #mob drops an item
         self.coin = random.randint(1, 10) #mob has 1-10 gold
+        self.gear = []
 
-        self.gear = [NUMOFGEARSLOTS]
+        self.temp = 1
+        while self.temp < NUMOFGEARSLOTS:
+            self.gear.append(Item(SWORD))
+            self.temp += 1
 
         #give a sword to pretend battle
         self.gear[PRIMARY] = Item(SWORD)

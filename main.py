@@ -47,7 +47,7 @@ class Game:
         self.lastzone = 0
 
         #set battle timers
-        self.playertimer = pygame.event.custom_type()
+        #self.playertimer = pygame.event.custom_type()
         self.mobtimer = pygame.event.custom_type()
 
         #sprite sheets
@@ -162,7 +162,7 @@ class Game:
                         self.party[self.top_character].y = i+KELETHINMAINOFFSET
 
         elif map == KELETHINBATTLE:
-            self.mobs.clear()
+            #self.mobs.clear()
             for i, row in enumerate(map):
                 for j, column in enumerate(row):                    
                     StaticSprite(self, j, i, BATTLEGROUNDX, BATTLEGROUNDY, GROUND_LAYER)
@@ -238,14 +238,16 @@ class Game:
                         self.menuboxes[SHIFTLEFT] = StaticSprite(self, j, i, SHIFTLEFTX, SHIFTLEFTY, GEAR_LAYER)
                     if column == "Z":
                        self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, SHIFTRIGHTX, SHIFTRIGHTY, GEAR_LAYER)
+                    if column == "V":
+                       self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, BLANKSLOTX, BLANKSLOTY, GEAR_LAYER)
 #Roll a Natural 20 on the dice.
 #Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
 #If the attack roll from Step 2 is a hit, roll your damage twice and add the result of both rolls together.
 #If the attack roll from Step 2 is a miss, you did not get a crit. However, because you rolled a Natural 20, you still successfully made a normal attack. Roll for damage!
 #Congratulations!(!)
     def checkVitals(self, team):
+        isAlive = False
         if team == PLAYERS:
-            isAlive = False
             for i in range(self.party.__len__()):
                 if self.party[i].hp >= 0:
                     isAlive = True
@@ -255,20 +257,40 @@ class Game:
                     self.endBattle()
 
         if team == MOBS:
-            deadcounter = 0
             for i in range(self.mobs.__len__()):
-                if self.mobs[i].hp <=0:
-                    deadcounter += 1
-            if deadcounter == self.mobs.__len__():
-                print("You are victorious!")
+                if self.mobs[i].hp > 0:
+                    isAlive = True
+            
+            if not isAlive:
+                print ("The enemy is defeated!")
                 self.endBattle()
+
+            #deadcounter = 0
+            #for i in range(self.mobs.__len__()):
+                #if self.mobs[i].hp <=0:
+                    #print ("enemy killed")
+                    #self.mobs[i].kill() #kill sprite
+                    #deadcounter += 1
+                    #if self.mobs.__len__() < 1:
+                        #print("You are victorious!")
+                        #self.endBattle()
+            #if deadcounter == self.mobs.__len__():
+                #print("You are victorious!")
+                #self.endBattle()
                 
     def playerAttack(self, mob):
         print("Player attacking!")
         temproll = random.randint(1, 20)
         if temproll == 20:
             print ("Natural 20, critical chance!")
-            #roll a crit chance and damage
+            if (temproll + self.party[0].atkbonus) > mob.ac:
+                #random the damage die for the weapon
+                temproll2 = random.randint(1,self.party[0].gear[PRIMARY].atk)
+                #crit the damage
+                temproll2 *= 2
+                # show damage being done to mob
+                print("Player does", temproll2 + self.party[0].atkbonus, "damage")
+                mob.hp -=  temproll2 + self.party[0].atkbonus + self.party[0].strmod
         elif temproll == 1:
             print ("Natural 1, critical miss!")
             #miss the enemy
@@ -300,26 +322,36 @@ class Game:
     
     def endBattle(self):
         #stop timers
-        pygame.time.set_timer(self.playertimer, 0)       
+        pygame.time.set_timer(self.party[0].playertimer, 0)       
         pygame.time.set_timer(self.mobtimer, 0)
         self.in_battle = False
         self.battle.empty()
         self.all_sprites.empty()
+        self.mobs.clear()
         self.all_sprites.add(self.playersprite)
         self.current_zone.id = KELETHINMAIN
         self.createTilemap(self.current_zone.id)
 
     def startBattle(self):
+        #show a "cursor" at starting mob
+        #use keys to move cursor to mob to attack
+        #only show & select sprites that aren't killed
+        battlecursorx = self.mobs[0].x + 20
+        battlecursory = self.mobs[0].y 
+        self.menuboxes.append(StaticSprite(self, battlecursorx, battlecursory, POINTERX, POINTERY, GEAR_LAYER))
         #force draw new sprites
         self.draw()
         self.update()
         #flag in battle
-        #self.in_battle = True
+        self.in_battle = True
+
+
+
+
 
         #set timers - use inits to offset
-        #currently the Party and the Mobs groups all attack at the same time on the same timer
-        pygame.time.set_timer(self.playertimer, 200)       
-        pygame.time.set_timer(self.mobtimer, 300)
+        pygame.time.set_timer(self.party[0].playertimer, 200)       
+        #pygame.time.set_timer(self.mobtimer, 300)
 
         #from here timer events take over, until battle is over
     
@@ -375,10 +407,13 @@ class Game:
                 self.mobAttack(self.party[self.top_character])
                 self.checkVitals(PLAYERS)
 
-            elif event.type == self.playertimer:
+            elif event.type == self.party[0].playertimer:
+                #set timer to 0 until player enters action
+                pygame.time.set_timer(self.party[0].playertimer, 0)
+                print ("Enter Player Input")
                 #wait for player input, then do that to whichever mob is chosen
-                self.playerAttack(self.mobs[1])
-                self.checkVitals(MOBS)
+                #self.playerAttack(self.mobs[1])
+                #self.checkVitals(MOBS)
             
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -393,8 +428,13 @@ class Game:
 
             elif event.type == pygame.KEYUP and self.in_battle:
                 if event.key == pygame.K_g:
-                    self.battle_input = 1
+                    print ("g pressed - Attacking !")
+                    self.playerAttack(self.mobs[0])
+                    self.checkVitals(MOBS)
+                    pygame.time.set_timer(self.party[0].playertimer, 200) 
+
                 elif event.key == pygame.K_h:
+                    print ("h pressed")
                     self.battle_input = 2
 
             elif event.type == pygame.KEYUP:
