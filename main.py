@@ -51,7 +51,8 @@ class Game:
         self.mobtimer = pygame.event.custom_type()
 
         #sprite sheets
-        self.character_spritesheet = BSpritesheet('img/character.png')        
+        self.character_spritesheet = BSpritesheet('img/character.png')    
+        self.items_spritesheet = BSpritesheet('img/itemsprites.bmp')    
         #self.terrain_spritesheet = Spritesheet('img/terrain.png')
         self.enemy_spritesheet = BSpritesheet('img/enemy.png')
         self.attack_spritesheet = BSpritesheet('img/attack.png')
@@ -221,7 +222,8 @@ class Game:
                     if column == "Q":
                         self.menuboxes[SPELLS] = StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER)
                     if column == "H":
-                        self.menuboxes[HEAD] = StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, GEAR_LAYER)
+                        self.menuboxes[HEAD] = Item(self, j, i, SWORD)
+                        #self.menuboxes[HEAD] = StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, GEAR_LAYER)
                     if column == "C":
                         self.menuboxes[CHEST] = StaticSprite(self, j, i, CHESTSLOTX, CHESTSLOTY, GEAR_LAYER)
                     if column == "R":
@@ -391,7 +393,8 @@ class Game:
                                     pygame.mouse.set_visible(False) 
                                     #get mouse pos for cursor sprite
                                     tempcoord = pygame.mouse.get_pos()
-                                    self.menuboxes[CURSOR] = StaticSprite(self, tempcoord[0], tempcoord[1], HEADSLOTX, HEADSLOTY, GEAR_LAYER)
+                                    #self.menuboxes[CURSOR] = StaticSprite(self, tempcoord[0], tempcoord[1], HEADSLOTX, HEADSLOTY, GEAR_LAYER)
+                                    self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], SWORD)
                                     #self.cursor_img_rect = self.menuboxes[HEAD].get_rect()
                                 #while self.oncursor
                                     #cursor_img_rect.center = pygame.mouse.get_pos()  # update position 

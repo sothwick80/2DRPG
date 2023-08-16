@@ -25,6 +25,47 @@ class BSpritesheet:
         sprite.set_colorkey(BLACK)
         return sprite
 
+#Body of the items in inventory
+class Item(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, itemid):
+        self.game = game
+        self._layer = GEAR_LAYER
+        #DISPLAY GROUPS
+        self.groups = self.game.all_sprites, self.game.text
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE   
+        self.height = TILESIZE 
+
+        self.name = "" #name of the item
+        self.description = "" #description of item
+        self.pic = 0
+        self.equip = False #if equippable, if not put in inventory directly
+        self.effect = 0 #if item has an effect
+        self.atk = 0
+        self.ac = 0
+        self.value = 0
+        
+        if itemid == POTION:
+            self.name = "Potion of Minor Relief" #name of the item
+            self.description = "This potion heals a small boo boo" #description of item
+            self.equip = False #if equippable, if not put in inventory directly
+            self.effect = MINORRELIEF #if item has an effect
+            self.image = self.game.items_spritesheet.get_sprite(320, 420, self.width, self.height)
+            #get a pic for the item as well, put it here - sprite sheet but does it have to be a whole sprite?
+        elif itemid == SWORD:
+            self.name = "Rusty Sword" #name of the item
+            self.description = "Barely a sword." #description of item
+            self.equip = True #if equippable, if not put in inventory directly
+            self.atk = 4 #attack die associated
+            self.image = self.game.items_spritesheet.get_sprite(768, 320, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
 
@@ -588,6 +629,7 @@ class TextSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
 
 #from tutorial
 class Button:

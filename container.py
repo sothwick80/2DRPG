@@ -5,6 +5,7 @@ from sprites import *
 class CharacterSheet(Player):
     def __init__(self, game, x, y):
         Player.__init__(self, game, x, y)
+        self.game = game
         self.name = self.description = ""
         self.jobclass = 0
         
@@ -31,16 +32,16 @@ class CharacterSheet(Player):
         #INITIALIZE LISTS inventory starts at 1
         self.temp = 1
         while self.temp < NUMOFINVENTORYSLOTS:
-            self.inventory.append(Item(SWORD))
+            self.inventory.append(Item(self.game, 10, 10, SWORD))
             self.temp += 1
         
         self.temp = 1
         while self.temp < NUMOFGEARSLOTS:
-            self.gear.append(Item(SWORD))
+            self.gear.append(Item(self.game, 10, 10, SWORD))
             self.temp += 1
 
         #give a sword to pretend battle
-        self.gear[PRIMARY] = Item(SWORD)
+        self.gear[PRIMARY] = Item(self.game, 10, 10, SWORD)
 
     #any time gear is equipped, unequipped, debuffs, buffs, etc
     def calculate_stats(self):
@@ -87,32 +88,6 @@ class MobSheet(Enemy):
         #give a sword to pretend battle
         self.gear[PRIMARY] = Item(SWORD)
 
-
-
-
-#Body of the items in inventory
-class Item():
-    def __init__(self, itemid):
-        self.name = "" #name of the item
-        self.description = "" #description of item
-        self.pic = 0
-        self.equip = False #if equippable, if not put in inventory directly
-        self.effect = 0 #if item has an effect
-        self.atk = 0
-        self.ac = 0
-        self.value = 0
-        
-        if itemid == POTION:
-            self.name = "Potion of Minor Relief" #name of the item
-            self.description = "This potion heals a small boo boo" #description of item
-            self.equip = False #if equippable, if not put in inventory directly
-            self.effect = MINORRELIEF #if item has an effect
-            #get a pic for the item as well, put it here - sprite sheet but does it have to be a whole sprite?
-        elif itemid == SWORD:
-            self.name = "Rusty Sword" #name of the item
-            self.description = "Barely a sword." #description of item
-            self.equip = True #if equippable, if not put in inventory directly
-            self.atk = 4 #attack die associated
 
 #an interactible, impassible block that holds the ID of an item which is then created in the inventory
 class ItemBlock(StaticSprite):
