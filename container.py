@@ -34,7 +34,7 @@ class CharacterSheet(Player):
         while self.temp < NUMOFINVENTORYSLOTS:
             self.inventory.append(Item(self.game, 10, 10, SWORD))
             self.temp += 1
-        
+
         self.temp = 1
         while self.temp < NUMOFGEARSLOTS:
             self.gear.append(Item(self.game, 10, 10, SWORD))
@@ -42,6 +42,9 @@ class CharacterSheet(Player):
 
         #give a sword to pretend battle
         self.gear[PRIMARY] = Item(self.game, 10, 10, SWORD)
+        #CLEAR THE SWORDS DRAWN TO SCREEN (NEED SEPERATE SPRITE GROUP TO KILL)
+        for sprite in self.game.item_sprites:
+            sprite.kill()
 
     #any time gear is equipped, unequipped, debuffs, buffs, etc
     def calculate_stats(self):
@@ -101,10 +104,15 @@ class ItemBlock(StaticSprite):
 class DialogNPC(StaticSprite):
     def __init__(self, game, x, y, pixx, pixy, layer, index):
         StaticSprite.__init__(self, game, x, y, pixx, pixy, layer)
+        
+        self.id = index
         self.hasdialog = False
         self.dialog = []
         self.dialogindex = -1 #for dialog IF statement
         self.dialoglength = -1 #how many dialogs there are
+
+        #list of item IDs to be sold
+        self.itemsforsale = []
 
         if index == QUESTNPC:
             self.hasdialog = True
@@ -120,3 +128,14 @@ class DialogNPC(StaticSprite):
             self.dialogindex = 0
             self.dialoglength = 1
             self.dialog.append("Can you even read this, brah?")
+
+        elif index == MERCHANT:
+            self.hasdialog = True
+            self.dialogindex = 0
+            self.dialoglength = 1
+            self.dialog.append("Welcome to my Shop")
+            self.itemsforsale = [SWORD, SHIRT, POTION]
+            #build inventory & set pricing
+            #self.itemsforsale.append(Item(self.game, 10, 10, SWORD))
+            #self.itemsforsale.append(Item(self.game, 12, 10, SHIRT))
+            #show interactable blocks that remove gold as per items value

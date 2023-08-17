@@ -31,7 +31,7 @@ class Item(pygame.sprite.Sprite):
         self.game = game
         self._layer = GEAR_LAYER
         #DISPLAY GROUPS
-        self.groups = self.game.all_sprites, self.game.text
+        self.groups = self.game.all_sprites, self.game.item_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
         
         self.x = x * TILESIZE
@@ -53,14 +53,23 @@ class Item(pygame.sprite.Sprite):
             self.description = "This potion heals a small boo boo" #description of item
             self.equip = False #if equippable, if not put in inventory directly
             self.effect = MINORRELIEF #if item has an effect
-            self.image = self.game.items_spritesheet.get_sprite(320, 420, self.width, self.height)
+            self.image = self.game.items_spritesheet.get_sprite(POTIONX, POTIONY, self.width, self.height)
             #get a pic for the item as well, put it here - sprite sheet but does it have to be a whole sprite?
         elif itemid == SWORD:
             self.name = "Rusty Sword" #name of the item
             self.description = "Barely a sword." #description of item
             self.equip = True #if equippable, if not put in inventory directly
             self.atk = 4 #attack die associated
-            self.image = self.game.items_spritesheet.get_sprite(768, 320, self.width, self.height)
+            self.image = self.game.items_spritesheet.get_sprite(SWORDX, SWORDY, self.width, self.height)
+        elif itemid == SHIRT:
+            self.name = "Rusty Sword" #name of the item
+            self.description = "Barely a sword." #description of item
+            self.equip = True #if equippable, if not put in inventory directly
+            self.atk = 4 #attack die associated
+            self.image = self.game.items_spritesheet.get_sprite(SHIRTX, SHIRTY, self.width, self.height)
+        elif itemid == BLANK:
+            self._layer = INIT_LAYER
+            self.image = self.game.items_spritesheet.get_sprite(0, 0, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
@@ -487,13 +496,13 @@ class StaticSprite(pygame.sprite.Sprite):
         elif layer == GEAR_LAYER:
             #40, 47 IS SIZE OF SLOTS
             #THIS WILL NEED TO GRAB FROM GEAR SHEET, NOT TEXT SHEET EVENTUALLY
-            self.groups = self.game.all_sprites, self.game.text
+            self.groups = self.game.all_sprites, self.game.item_sprites
             self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 40, 47)
         elif layer == DIALOGNPC_LAYER: 
             self.groups = self.game.all_sprites, self.game.blocks#, self.game.dialognpc - can I use hasdialog flag??
             self.image = self.game.enemy_spritesheet.get_sprite(ENEMYX, ENEMYY, self.width, self.height)
             #NPClist.append(dialog_npc) - to check through and get dialog
-        else: #GROUND_LAYER
+        else: #GROUND_LAYER, INIT_LAYER
             self.groups = self.game.all_sprites
             self.image = self.game.temp_spritesheet.get_sprite(pixx, pixy, self.width, self.height)
         pygame.sprite.Sprite.__init__(self, self.groups)

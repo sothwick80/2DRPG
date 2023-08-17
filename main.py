@@ -13,6 +13,7 @@ class Game:
         self.running = True
 
         self.inmenu = False #Is user in menu screen
+        self.inmerchant = False
 
         #if displaying battle zone
         self.in_battle = False
@@ -34,6 +35,7 @@ class Game:
 
         #list of CLICKABLE MENU SPRITES
         self.menuboxes = []
+        self.merchantboxes = []
 
         #if there is a sprite on the cursor
         self.oncursor = False
@@ -42,6 +44,9 @@ class Game:
         self.dialognpc = []
         #list of items in chests or available for PU in the zone, empty and reload when zoning
         self.items = []
+
+        #index of current merchant to display and buy goods
+        self.current_merchant = -1
 
         #keep last zone for inmenu
         self.lastzone = 0
@@ -84,7 +89,7 @@ class Game:
         #SPRITES FOR GROUPING TYPES TOGETHER
         self.battle = pygame.sprite.LayeredUpdates()
         self.npc = pygame.sprite.LayeredUpdates()
-        self.text = pygame.sprite.LayeredUpdates()
+        self.text = self.item_sprites = pygame.sprite.LayeredUpdates()
         #self.attacks = pygame.sprite.LayeredUpdates()
 
         #CREATE PLAYER AND ADD TO PARTY
@@ -97,8 +102,18 @@ class Game:
         #save values from COLLIDED NPC
         self.dialogindex = -1
         self.dialoglength = -1
-        
 
+        #initialize clickable MENU sprite list
+        temp = 1
+        while temp < NUMOFMENUITEMS:
+            self.menuboxes.append(StaticSprite(self, 0, 0, 0, 0, INIT_LAYER))
+            temp += 1
+
+        temp = 1
+        while temp < NUMOFMERCHANTSLOTS:
+            self.merchantboxes.append(Item(self, 0, 0, BLANK))
+            temp += 1        
+        
     def showDialog(self, dialog):
         tempx = 1
         #ERASE SHOWING TEXT
@@ -143,24 +158,25 @@ class Game:
                         self.party[self.top_character].y = i
 
         elif map == KELETHINMAIN:
+            self.dialognpc.clear()
             for i, row in enumerate(map):
                 for j, column in enumerate(row):
-                    StaticSprite(self, j, i+KELETHINMAINOFFSET, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
+                    StaticSprite(self, j, i, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
                     if column == "B":
-                        StaticSprite(self, j, i+KELETHINMAINOFFSET, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)
+                        StaticSprite(self, j, i, FRANTIKWALLX, FRANTIKWALLY, BLOCK_LAYER)
                     if column == "Z":
-                        StaticSprite(self, j, i+KELETHINMAINOFFSET, ZONELINEX, ZONELINEY, ZONE_LAYER)
-                    if column == "C":
-                        StaticSprite(self, j, i+KELETHINMAINOFFSET, FRANTIKBEDAX, FRANTIKBEDAY, BLOCK_LAYER)
-                    if column == "D":
-                        StaticSprite(self, j, i+KELETHINMAINOFFSET, FRANTIKBEDBX, FRANTIKBEDBY, BLOCK_LAYER)
-                    if column == "R":
-                        StaticSprite(self, j, i+KELETHINMAINOFFSET, KELETHINPOTX, KELETHINPOTY, BLOCK_LAYER)
+                        StaticSprite(self, j, i, ZONELINEX, ZONELINEY, ZONE_LAYER)
+                    if column == "M":
+                        StaticSprite(self, j, i, MERCHANTSTANDX, MERCHANTSTANDY, BLOCK_LAYER)
+                    if column == "N":
+                        StaticSprite(self, j, i, MERCHANTSTANDX + TILESIZE, MERCHANTSTANDY, BLOCK_LAYER)
+                    if column == "G":
+                        self.dialognpc.append(DialogNPC(self, j, i, MERCHANTAX, MERCHANTAY, DIALOGNPC_LAYER, MERCHANT))
                     if column == "E":
-                        AnimatedSprite(self, j, i+KELETHINMAINOFFSET)
+                        AnimatedSprite(self, j, i)
                     if column == "P":
                         self.party[self.top_character].x = j
-                        self.party[self.top_character].y = i+KELETHINMAINOFFSET
+                        self.party[self.top_character].y = i
 
         elif map == KELETHINBATTLE:
             #self.mobs.clear()
@@ -183,11 +199,6 @@ class Game:
             self.blocks.empty()
             self.enemies.empty()
             self.zonelines.empty()
-            #initialize clickable sprite gear list
-            self.temp = 1
-            while self.temp < NUMOFMENUITEMS:
-                self.menuboxes.append(StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER))
-                self.temp += 1
 
             print ("Length is ", self.menuboxes.__len__())
             for i, row in enumerate(map):
@@ -202,7 +213,22 @@ class Game:
                         self.menuboxes[CHARACTER] = StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, TEXT_LAYER)
                     if column == "Q":
                         self.menuboxes[SPELLS] = StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER)
-                       
+
+        elif map == MERCHANTMENU:
+            for i, row in enumerate(map):
+                for j, column in enumerate(row):
+                    StaticSprite(self, j+10, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
+                    if column == "A":
+                        StaticSprite(self, j+10, i, MAINMENUWALLX, MAINMENUWALLY, BLOCK_LAYER)
+                        #LOOK IN MERCHANT AND DISPLAY FOR SALE ITEMS
+
+            #current merchant pulled from 'E' collision with DialogNPC
+            merchantint = 0 #temp var
+            while merchantint < self.dialognpc[self.current_merchant].itemsforsale.__len__():
+                self.merchantboxes[merchantint] = (Item(self, 12, 1+merchantint, self.dialognpc[self.current_merchant].itemsforsale[merchantint]))
+                #self.menuboxes.append(Item(self, 12, 1+merchantint, self.dialognpc[self.current_merchant].itemsforsale[merchantint]))
+                merchantint += 1
+
         elif map == CHARACTERMENU:
             #empty the sprite groups
             self.all_sprites.empty()
@@ -347,14 +373,9 @@ class Game:
         #flag in battle
         self.in_battle = True
 
-
-
-
-
         #set timers - use inits to offset
         pygame.time.set_timer(self.party[0].playertimer, 200)       
         #pygame.time.set_timer(self.mobtimer, 300)
-
         #from here timer events take over, until battle is over
     
     def events(self):
@@ -364,8 +385,8 @@ class Game:
                 self.running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
                 if self.inmenu:
-                    mouse_pos = pygame.mouse.get_pos()
                     i = 1
                     while i < self.menuboxes.__len__():
                         if self.menuboxes[i].rect.collidepoint(mouse_pos):
@@ -376,7 +397,12 @@ class Game:
                                 self.all_sprites.empty()
                                 self.blocks.empty()
                                 self.text.empty()
-                                self.menuboxes.clear()
+                                #remove images from menu clickables
+                                temp = 1
+                                while temp < NUMOFMENUITEMS:
+                                    self.menuboxes.append(StaticSprite(self, 0, 0, 0, 0, INIT_LAYER))
+                                    temp += 1
+                                #self.menuboxes.clear()
                                 #re-add player to all_sprites group
                                 self.all_sprites.add(self.playersprite)
                                 #go back to zone
@@ -404,6 +430,26 @@ class Game:
                                     self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
                                     pygame.mouse.set_visible(True)
                                     self.oncursor = False
+                        i += 1
+                elif self.inmerchant:
+                    #ITEMS DISAPPEAR WHEN PICKED UP FOR SOME REASON
+                    i = 0
+                    while i < self.merchantboxes.__len__():
+                        if self.merchantboxes[i].rect.collidepoint(mouse_pos):
+                            if not self.oncursor:
+                                print ("Picking Up Merchant Item")
+                                self.oncursor = True
+                                pygame.mouse.set_visible(False) 
+                                #get mouse pos for cursor sprite
+                                #tempcoord = pygame.mouse.get_pos()
+                                #self.menuboxes[CURSOR] = StaticSprite(self, tempcoord[0], tempcoord[1], HEADSLOTX, HEADSLOTY, GEAR_LAYER)
+                                self.menuboxes[CURSOR] = self.merchantboxes[i] #Item(self, tempcoord[0], tempcoord[1], SWORD)
+                            else:
+                                print("Dropping Into Merchant")
+                                self.menuboxes[CURSOR].kill()
+                                #self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
+                                pygame.mouse.set_visible(True)
+                                self.oncursor = False
                         i += 1
 
             elif event.type == self.mobtimer:
@@ -455,7 +501,11 @@ class Game:
                             self.templength = self.dialognpc[tempint].dialoglength
                             self.tempdialog = self.dialognpc[tempint].dialog
                             self.showDialog(self.tempdialog[self.tempindex])
-
+                            #IF THIS DIALOG IS A MERCHANT, ALSO DISPLAY WINDOW WITH ITEMS FOR SALE
+                            if self.dialognpc[tempint].id == MERCHANT:
+                                self.inmerchant = True
+                                self.current_merchant = tempint #save index offset into dialog npc list
+                                self.createTilemap(MERCHANTMENU)
                         tempint += 1
 
                     #check if the block has an item in it
@@ -486,6 +536,7 @@ class Game:
                         #reset the index and length counter
                         self.tempindex = self.templength = -1
                         self.in_dialog = False
+                        self.inmerchant = False
                         #input -1 into showDialog to end dialog mode
                         self.showDialog("kill")
                    

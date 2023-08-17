@@ -14,6 +14,7 @@ NPC_LAYER = 4
 ENEMY_LAYER = 3
 BLOCK_LAYER = 2
 GROUND_LAYER = 1
+INIT_LAYER = 0
 
 PLAYER_SPEED = 3
 ENEMY_SPEED = 2
@@ -33,6 +34,7 @@ CHARACTER_SPACING = 0.4
 NUMOFMENUITEMS = 20 #MAKES 11 SPOTS, TOTAL AMOUNT OF CLICKABLE ITEMS IN MENU
 NUMOFGEARSLOTS = 7
 NUMOFINVENTORYSLOTS = 10
+NUMOFMERCHANTSLOTS = 4
 PRIMARY = 1
 SECONDARY = 2
 HEAD = 3
@@ -41,6 +43,7 @@ ARMS = 5
 LEGS = 6
 FEET = 7
 ## MENU SPRITES TO BE INDEXED AFTER EQUIPPABLE SLOTS
+## VERY IFFY - NEED TO BE LOADED IN THE CORRECT ORDER
 EXIT = 8
 CHARACTER = 9
 SPELLS = 10
@@ -49,52 +52,66 @@ SHIFTRIGHT = 12
 CURSOR = 13
 
 
+MERCHANTONE = 14
+MERCHANTTWO = 15
+MERCHANTTHREE = 16
+
+
 
 
 ## ITEM DEFINES ##
+BLANK = 0
 POTION = 1
 SWORD = 2
 SHIRT = 3
 COIN = 4
+
+POTIONX = 128
+POTIONY = 160
+SWORDX = 768
+SWORDY = 320
+SHIRTX = 416
+SHIRTY = 288
 
 ## EFFECT DEFINES ##
 MINORRELIEF = 1
 
 QUESTNPC = 1
 NEXTNPC = 2
+MERCHANT = 3
+
+MERCHANTAX = 96
+MERCHANTAY = 0
+MERCHANTBX = 192
+MERCHANTBY = 0
 
 
 KELETHINMAIN = [
-'BBBBBBBBBBBBBBBBBBBBBBBBB',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.............E.........B',
-'B.......................B',
-'Z.P.....................B',
-'Z.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B..................E....B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'BBBBBBBBBBBBBBBBBBBBBBBBB',
+'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
+'B.................................B',
+'B......MN.........................B',
+'B......G..........................B',
+'B.................................B',
+'B.................................B',
+'B.................................B',
+'B.................................B',
+'B.................................B',
+'B.................................B',
+'Z.P...............................B',
+'Z.................................B',
+'B...............E.................B',
+'B.................................B',
+'B.................................B',
+'B.................................B',
+'B.................................B',
+'B.................................B',
+'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
 ]
-
 KELETHINMAINOFFSET = -8
+
+MERCHANTSTANDX = 768
+MERCHANTSTANDY = 1728
+
 
 FRANTIKSHUT = [
 'BBBBBBBBBBBBBBBBBBBBBBBBB',
@@ -120,10 +137,6 @@ FRANTIKSHUT = [
 
 NPCX = 0
 NPCY = 0
-MERCHANTAX = 96
-MERCHANTAY = 0
-MERCHANTBX = 192
-MERCHANTBY = 0
 
 CHESTX = 224
 CHESTY = 0
@@ -250,4 +263,13 @@ MAINMENU = [
 'A.......................A',
 'A.......................A',
 'AAAAAAAAAAAAAAAAAAAAAAAAA',
+]
+
+MERCHANTMENU = [
+'AAAAA',
+'A...A',
+'A...A',
+'A...A',
+'A...A',
+'AAAAA',
 ]
