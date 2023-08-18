@@ -248,26 +248,28 @@ class Game:
                     if column == "Q":
                         self.menuboxes[SPELLS] = StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER)
                     if column == "H":
-                        self.menuboxes[HEAD] = Item(self, j, i, SWORD)
-                        #self.menuboxes[HEAD] = StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, GEAR_LAYER)
+                        pass
+                    ## TRYING TO GET THESE TO BE DRAWN UNDER THE EQUIPPED GEAR THEMSELVES
+                        #self.menuboxes[HEAD] = Item(self, j, i, SWORD)
+                        #self.menuboxes[HEAD] = StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, MENU_LAYER)
                     if column == "C":
-                        self.menuboxes[CHEST] = StaticSprite(self, j, i, CHESTSLOTX, CHESTSLOTY, GEAR_LAYER)
+                        self.menuboxes[CHEST] = StaticSprite(self, j, i, CHESTSLOTX, CHESTSLOTY, MENU_LAYER)
                     if column == "R":
-                        self.menuboxes[ARMS] = StaticSprite(self, j, i, ARMSSLOTX, ARMSSLOTY, GEAR_LAYER)
+                        self.menuboxes[ARMS] = StaticSprite(self, j, i, ARMSSLOTX, ARMSSLOTY, MENU_LAYER)
                     if column == "L":
-                        self.menuboxes[LEGS] = StaticSprite(self, j, i, LEGSSLOTX, LEGSSLOTY, GEAR_LAYER)
+                        self.menuboxes[LEGS] = StaticSprite(self, j, i, LEGSSLOTX, LEGSSLOTY, MENU_LAYER)
                     if column == "F":
-                        self.menuboxes[FEET] = StaticSprite(self, j, i, FEETSLOTX, FEETSLOTY, GEAR_LAYER)
+                        self.menuboxes[FEET] = StaticSprite(self, j, i, FEETSLOTX, FEETSLOTY, MENU_LAYER)
                     if column == "P":
-                        self.menuboxes[PRIMARY] = StaticSprite(self, j, i, PRIMARYSLOTX, PRIMARYSLOTY, GEAR_LAYER)
+                        self.menuboxes[PRIMARY] = StaticSprite(self, j, i, PRIMARYSLOTX, PRIMARYSLOTY, MENU_LAYER)
                     if column == "S":
-                       self.menuboxes[SECONDARY] = StaticSprite(self, j, i, SECONDARYSLOTX, SECONDARYSLOTY, GEAR_LAYER)
+                       self.menuboxes[SECONDARY] = StaticSprite(self, j, i, SECONDARYSLOTX, SECONDARYSLOTY, MENU_LAYER)
                     if column == "U":
-                        self.menuboxes[SHIFTLEFT] = StaticSprite(self, j, i, SHIFTLEFTX, SHIFTLEFTY, GEAR_LAYER)
+                        self.menuboxes[SHIFTLEFT] = StaticSprite(self, j, i, SHIFTLEFTX, SHIFTLEFTY, MENU_LAYER)
                     if column == "Z":
-                       self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, SHIFTRIGHTX, SHIFTRIGHTY, GEAR_LAYER)
+                       self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, SHIFTRIGHTX, SHIFTRIGHTY, MENU_LAYER)
                     if column == "V":
-                       self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, BLANKSLOTX, BLANKSLOTY, GEAR_LAYER)
+                       self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, BLANKSLOTX, BLANKSLOTY, MENU_LAYER)
 #Roll a Natural 20 on the dice.
 #Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
 #If the attack roll from Step 2 is a hit, roll your damage twice and add the result of both rolls together.
@@ -366,7 +368,7 @@ class Game:
         #only show & select sprites that aren't killed
         battlecursorx = self.mobs[0].x + 20
         battlecursory = self.mobs[0].y 
-        self.menuboxes.append(StaticSprite(self, battlecursorx, battlecursory, POINTERX, POINTERY, GEAR_LAYER))
+        self.menuboxes.append(StaticSprite(self, battlecursorx, battlecursory, POINTERX, POINTERY, MENU_LAYER))
         #force draw new sprites
         self.draw()
         self.update()
@@ -402,7 +404,7 @@ class Game:
                                 while temp < NUMOFMENUITEMS:
                                     self.menuboxes.append(StaticSprite(self, 0, 0, 0, 0, INIT_LAYER))
                                     temp += 1
-                                #self.menuboxes.clear()
+
                                 #re-add player to all_sprites group
                                 self.all_sprites.add(self.playersprite)
                                 #go back to zone
@@ -414,23 +416,24 @@ class Game:
                                 print("Picking Up - Arms")
                             elif i == HEAD:
                                 if not self.oncursor:
-                                    print ("Picking Up - Head Slot")
-                                    self.oncursor = True
-                                    pygame.mouse.set_visible(False) 
-                                    #get mouse pos for cursor sprite
-                                    tempcoord = pygame.mouse.get_pos()
-                                    #self.menuboxes[CURSOR] = StaticSprite(self, tempcoord[0], tempcoord[1], HEADSLOTX, HEADSLOTY, GEAR_LAYER)
-                                    self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], SWORD)
-                                    #self.cursor_img_rect = self.menuboxes[HEAD].get_rect()
-                                #while self.oncursor
-                                    #cursor_img_rect.center = pygame.mouse.get_pos()  # update position 
+                                    if self.party[self.top_character].gear[HEAD].id != BLANK:
+                                        print ("Picking Up - Head Slot")
+                                        self.oncursor = True
+                                        pygame.mouse.set_visible(False) 
+                                        #get mouse pos for cursor sprite
+                                        tempcoord = pygame.mouse.get_pos()
+                                        #if self.oncursor, the update loop updates mousepos with this image
+                                        self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], self.party[self.top_character].gear[HEAD].id)
+                                    else:
+                                        print ("No item equipped here.")
                                 else:
                                     print("Dropping Into Head Slot")
                                     self.menuboxes[CURSOR].kill()
-                                    self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
+                                    #self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
                                     pygame.mouse.set_visible(True)
                                     self.oncursor = False
                         i += 1
+
                 elif self.inmerchant:
                     #ITEMS DISAPPEAR WHEN PICKED UP FOR SOME REASON
                     i = 0
@@ -539,6 +542,23 @@ class Game:
                         self.inmerchant = False
                         #input -1 into showDialog to end dialog mode
                         self.showDialog("kill")
+                
+                elif event.key == pygame.K_i:
+                    self.inmenu = True
+                    self.lastzone = self.current_zone.id
+                    #empty the sprite groups
+                    self.all_sprites.empty()
+                    self.blocks.empty()
+                    self.enemies.empty()
+                    self.zonelines.empty()
+
+                    self.createTilemap(CHARACTERMENU)
+                    #draw in [gear] over the menu
+                    print ("Head ID = ", self.party[self.top_character].gear[HEAD].id)
+                    self.party[self.top_character].gear[HEAD] = Item(self, HEADSLOTX, HEADSLOTY, self.party[self.top_character].gear[HEAD].id)
+                    #force draw new sprites
+                    self.draw()
+                    self.update()
                    
     def update(self):
         #if there's something on the cursor, update to the mouse position
@@ -561,18 +581,18 @@ class Game:
             self.update()
             self.draw()
 
-    def menu(self):       
-        self.lastzone = self.current_zone.id
+    #def menu(self):       
+        #self.lastzone = self.current_zone.id
         #empty the sprite groups
-        self.all_sprites.empty()
-        self.blocks.empty()
-        self.enemies.empty()
-        self.zonelines.empty()
+        #self.all_sprites.empty()
+        #self.blocks.empty()
+        #self.enemies.empty()
+        #self.zonelines.empty()
 
-        self.createTilemap(MAINMENU)
+        #self.createTilemap(MAINMENU)
         #force draw new sprites
-        self.draw()
-        self.update()
+        #self.draw()
+        #self.update()
 
     def game_over(self):
         text = self.font.render('Game Over', True, WHITE)

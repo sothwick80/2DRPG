@@ -29,10 +29,10 @@ class BSpritesheet:
 class Item(pygame.sprite.Sprite):
     def __init__(self, game, x, y, itemid):
         self.game = game
-        self._layer = GEAR_LAYER
+        self._layer = ITEMS_LAYER
         #DISPLAY GROUPS
-        self.groups = self.game.all_sprites, self.game.item_sprites
-        pygame.sprite.Sprite.__init__(self, self.groups)
+        #self.groups = self.game.all_sprites, self.game.item_sprites
+        #pygame.sprite.Sprite.__init__(self, self.groups)
         
         self.x = x * TILESIZE
         self.y = y * TILESIZE
@@ -47,33 +47,54 @@ class Item(pygame.sprite.Sprite):
         self.atk = 0
         self.ac = 0
         self.value = 0
+        self.id = itemid #to check item status
         
         if itemid == POTION:
             self.name = "Potion of Minor Relief" #name of the item
             self.description = "This potion heals a small boo boo" #description of item
             self.equip = False #if equippable, if not put in inventory directly
             self.effect = MINORRELIEF #if item has an effect
-            self.image = self.game.items_spritesheet.get_sprite(POTIONX, POTIONY, self.width, self.height)
+            #self.image = self.game.items_spritesheet.get_sprite(POTIONX, POTIONY, self.width, self.height)
             #get a pic for the item as well, put it here - sprite sheet but does it have to be a whole sprite?
         elif itemid == SWORD:
             self.name = "Rusty Sword" #name of the item
             self.description = "Barely a sword." #description of item
             self.equip = True #if equippable, if not put in inventory directly
             self.atk = 4 #attack die associated
-            self.image = self.game.items_spritesheet.get_sprite(SWORDX, SWORDY, self.width, self.height)
+            #self.image = self.game.items_spritesheet.get_sprite(SWORDX, SWORDY, self.width, self.height)
         elif itemid == SHIRT:
-            self.name = "Rusty Sword" #name of the item
-            self.description = "Barely a sword." #description of item
+            self.name = "Torn Shirt" #name of the item
+            self.description = "Almost a shirt." #description of item
             self.equip = True #if equippable, if not put in inventory directly
-            self.atk = 4 #attack die associated
-            self.image = self.game.items_spritesheet.get_sprite(SHIRTX, SHIRTY, self.width, self.height)
+            self.ac = 2 
+            #self.image = self.game.items_spritesheet.get_sprite(SHIRTX, SHIRTY, self.width, self.height)
         elif itemid == BLANK:
             self._layer = INIT_LAYER
-            self.image = self.game.items_spritesheet.get_sprite(0, 0, self.width, self.height)
+            #self.image = self.game.items_spritesheet.get_sprite(0, 0, self.width, self.height)
+
+        #self.rect = self.image.get_rect()
+        #self.rect.x = self.x
+        #self.rect.y = self.y
+    
+    def move_layer(self, newlayer):
+        self._layer = newlayer
+        self.game.draw()
+        self.game.update()
+    
+    def show_image(self, whichitem):
+        self.groups = self.game.all_sprites, self.game.item_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        if whichitem == SWORD:
+            self.image = self.game.items_spritesheet.get_sprite(SWORDX, SWORDY, self.width, self.height)
+        elif whichitem == SHIRT:
+            self.image = self.game.items_spritesheet.get_sprite(SHIRTX, SHIRTY, self.width, self.height)
+
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+        
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -131,8 +152,6 @@ class Player(pygame.sprite.Sprite):
         self.x_change = 0
         self.y_change = 0
 
-    #inputcounter = 0
-    #showingtext = False
 
     def movement(self):
         keys = pygame.key.get_pressed()
@@ -160,9 +179,10 @@ class Player(pygame.sprite.Sprite):
                     sprite.rect.y -= PLAYER_SPEED
                 self.y_change += PLAYER_SPEED
                 self.facing = 'down'
-            if keys[pygame.K_i]:
-                self.game.inmenu = True
-                self.game.menu()
+            ## MOVED TO MAIN EVENTS HANDLER
+            #if keys[pygame.K_i]:
+            #    self.game.inmenu = True
+            #    self.game.menu()
 
     def collide_zoneline(self):
         hits = pygame.sprite.spritecollide(self, self.game.zonelines, False)
@@ -262,25 +282,6 @@ class Player(pygame.sprite.Sprite):
                 self.animation_loop += 0.1
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
-
-#Sprites that contain items
-#class ItemBlockSprite(pygame.sprite.Sprite):
-#    def __init__(self, game, x, y, pixx, pixy):
-#        self.game = game
-#        self._layer = BLOCK_LAYER
-        
-#        self.x = x * TILESIZE
-#        self.y = y * TILESIZE
-#        self.width = TILESIZE  
- #       self.height = TILESIZE
-
-#        self.groups = self.game.all_sprites, self.game.blocks
-#        self.image = self.game.temp_spritesheet.get_sprite(pixx, pixy, self.width, self.height)
-
-#        pygame.sprite.Sprite.__init__(self, self.groups)
-#       self.rect = self.image.get_rect()
-#        self.rect.x = self.x
- #       self.rect.y = self.y
 
 class AnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -493,7 +494,7 @@ class StaticSprite(pygame.sprite.Sprite):
             self.groups = self.game.all_sprites, self.game.text
             #100, 85 IS SIZE OF LETTERS
             self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 100, 85)
-        elif layer == GEAR_LAYER:
+        elif layer == MENU_LAYER:
             #40, 47 IS SIZE OF SLOTS
             #THIS WILL NEED TO GRAB FROM GEAR SHEET, NOT TEXT SHEET EVENTUALLY
             self.groups = self.game.all_sprites, self.game.item_sprites

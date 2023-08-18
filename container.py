@@ -32,20 +32,26 @@ class CharacterSheet(Player):
         #INITIALIZE LISTS inventory starts at 1
         self.temp = 1
         while self.temp < NUMOFINVENTORYSLOTS:
-            self.inventory.append(Item(self.game, 10, 10, SWORD))
+            self.inventory.append(Item(self.game, 0, 0, BLANK))
             self.temp += 1
 
         self.temp = 1
         while self.temp < NUMOFGEARSLOTS:
-            self.gear.append(Item(self.game, 10, 10, SWORD))
+            self.gear.append(Item(self.game, 0, 0, BLANK))
             self.temp += 1
 
         #give a sword to pretend battle
         self.gear[PRIMARY] = Item(self.game, 10, 10, SWORD)
-        #CLEAR THE SWORDS DRAWN TO SCREEN (NEED SEPERATE SPRITE GROUP TO KILL)
-        for sprite in self.game.item_sprites:
-            sprite.kill()
-
+        #self.gear[PRIMARY].move_layer(INIT_LAYER)
+        #self.gear[PRIMARY].id = SWORD
+        self.gear[HEAD].id = SHIRT
+        #self.gear[HEAD] = Item(self.game, 10, 10, SHIRT)
+        #self.gear[HEAD].move_layer(INIT_LAYER)
+        #CLEAR THE SWORD DRAWN TO SCREEN
+        ##  BUT THEN HOW DO I DRAW LATER, RE- ADD??
+        #for sprite in self.game.item_sprites:
+        #    sprite.kill()
+        
     #any time gear is equipped, unequipped, debuffs, buffs, etc
     def calculate_stats(self):
         pass
@@ -85,11 +91,11 @@ class MobSheet(Enemy):
 
         self.temp = 1
         while self.temp < NUMOFGEARSLOTS:
-            self.gear.append(Item(SWORD))
+            self.gear.append(Item(self.game, 10, 10, BLANK))
             self.temp += 1
 
         #give a sword to pretend battle
-        self.gear[PRIMARY] = Item(SWORD)
+        #self.gear[PRIMARY] = Item(self.game, 0, 0, SWORD)
 
 
 #an interactible, impassible block that holds the ID of an item which is then created in the inventory
