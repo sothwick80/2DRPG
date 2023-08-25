@@ -237,6 +237,7 @@ class Game:
             self.blocks.empty()
             self.text.empty()
             #self.menuboxes.clear()
+            slidecounter = INVBOXA
             for i, row in enumerate(map):
                 for j, column in enumerate(row):
                     StaticSprite(self, j, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
@@ -253,8 +254,7 @@ class Game:
                         self.menuboxes[HEAD] = StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, GEAR_LAYER)
                         #SHOWING ITEM IN THIS GEAR SLOT - SEEMS LIKE I'M REDRAWING TOO MUCH MAYBE ?
                         tempid = self.party[self.top_character].gear[HEAD].id
-                        self.party[self.top_character].gear[HEAD] = Item(self, j, i, tempid)
-                        
+                        self.party[self.top_character].gear[HEAD] = Item(self, j, i, tempid)        
                     if column == "C":
                         self.menuboxes[CHEST] = StaticSprite(self, j, i, CHESTSLOTX, CHESTSLOTY, GEAR_LAYER)
                     if column == "R":
@@ -272,11 +272,24 @@ class Game:
                     if column == "Z":
                        self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, SHIFTRIGHTX, SHIFTRIGHTY, GEAR_LAYER)
                     if column == "V":
-                       self.menuboxes[INVSLIDER] = StaticSprite(self, j, i, BLANKSLOTX, BLANKSLOTY, INVBAR_LAYER)
+                        self.menuboxes[slidecounter] = StaticSprite(self, j, i, TILESIZE, 0, INVBAR_LAYER)
+                        slidecounter += 1
+                       #self.menuboxes[INVSLIDER] = StaticSprite(self, j, i, BLANKSLOTX, BLANKSLOTY, INVBAR_LAYER)
                     if column == "M":
                         StaticSprite(self, j, i, MAINMENUWALLX, MAINMENUWALLY, BLOCK_LAYER)
                     if column == "B":
                         StaticSprite(self, j, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
+            
+            ## NOW DRAW ITEMS IN INVENTORY OVER THE [SLIDECOUNTER] SLOTS
+            for i in range(self.party[self.top_character].inventory.__len__()):
+                tempid = self.party[self.top_character].inventory[i].id
+                if tempid > 0:
+                    self.party[self.top_character].inventory[i] = Item(self, 4 + i, 16, tempid)
+            #force draw new sprites
+            #self.draw()
+            #self.update()
+            
+
 #Roll a Natural 20 on the dice.
 #Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
 #If the attack roll from Step 2 is a hit, roll your damage twice and add the result of both rolls together.
@@ -423,6 +436,7 @@ class Game:
                                 print("Picking Up - Arms")
                             elif i == HEAD:
                                 if not self.oncursor:
+                                    #IF THERE IS AN EQUIPPED ITEM, PICK IT UP
                                     print ("Picking Up - Head Slot")
                                     self.oncursor = True
                                     pygame.mouse.set_visible(False) 
@@ -436,6 +450,11 @@ class Game:
                                     self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
                                     pygame.mouse.set_visible(True)
                                     self.oncursor = False
+                            elif i == INVBOXA:
+                                if not self.oncursor: #TRY TO PICK UP FROM THAT SLOT
+                                    print("Box Fresh !")
+                                else:#TRY TO PUT SOMETHING HERE
+                                    pass
                         i += 1
                 elif self.inmerchant:
                     i = 0
@@ -525,8 +544,12 @@ class Game:
                             print("looking through items")
                             if self.items[tempint].hasitem: #put item into inventory
                                 self.items[tempint].hasitem = False #item is removed
-                                self.party[self.top_character].inventory.append(Item(self.items[tempint].itemid))
-                                
+                                # FIND FIRST SPOT THAT HAS A 0 ID, THEN ADD TO THAT SPOT
+                                for n in range (self.party[self.top_character].inventory.__len__()):
+                                    if self.party[self.top_character].inventory[n].id == 0:
+                                        self.party[self.top_character].inventory[n] = (Item(self, 0, 0, self.items[tempint].itemid))
+                                        break
+                                    
                                 #display name of item at end of intentory (length - 1)
                                 print("You picked up a ",self.party[self.top_character].inventory[self.party[self.top_character].inventory.__len__() - 1].name)
                         tempint += 1  

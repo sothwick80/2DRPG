@@ -42,6 +42,10 @@ class CharacterSheet(Player):
             self.gear.append(Item(self.game, 0, 0, BLANK))
             self.temp += 1
 
+        #giving inventory to try to draw to screen
+        self.inventory[0] = Item(self.game, 0, 0, SWORD)
+        self.inventory[1] = Item(self.game, 0, 0, SHIRT)
+        self.inventory[2] = Item(self.game, 0, 0, POTION)
         #give a sword to pretend battle
         self.gear[PRIMARY] = Item(self.game, 10, 10, SWORD)
         #self.gear[PRIMARY].move_layer(INIT_LAYER)

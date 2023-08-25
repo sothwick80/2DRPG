@@ -75,6 +75,7 @@ class Item(pygame.sprite.Sprite):
             self.image = self.game.items_spritesheet.get_sprite(SHIRTX, SHIRTY, self.width, self.height)
         elif itemid == BLANK:
             self._layer = INIT_LAYER
+            self.id = 0 #NOTHIN IN THIS SPOT / EMPTY
             self.image = self.game.items_spritesheet.get_sprite(0, 0, self.width, self.height)
 
         self.rect = self.image.get_rect()
@@ -517,8 +518,8 @@ class StaticSprite(pygame.sprite.Sprite):
             self.image = self.game.enemy_spritesheet.get_sprite(ENEMYX, ENEMYY, self.width, self.height)
             #NPClist.append(dialog_npc) - to check through and get dialog
         elif layer == INVBAR_LAYER:
-            self.groups = self.game.all_sprites, self.game.item_sprites#, self.game.dialognpc - can I use hasdialog flag??
-            self.image = self.game.npc_textsheet.get_sprite(BLANKSLOTX, BLANKSLOTY, 450, 85)
+            self.groups = self.game.all_sprites, self.game.menu_sprites#, self.game.dialognpc - can I use hasdialog flag??
+            self.image = self.game.temp_spritesheet.get_sprite(pixx, pixy, TILESIZE, TILESIZE)
         else: #GROUND_LAYER, INIT_LAYER
             self.groups = self.game.all_sprites
             self.image = self.game.temp_spritesheet.get_sprite(pixx, pixy, self.width, self.height)
