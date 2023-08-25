@@ -272,7 +272,11 @@ class Game:
                     if column == "Z":
                        self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, SHIFTRIGHTX, SHIFTRIGHTY, GEAR_LAYER)
                     if column == "V":
-                       self.menuboxes[SHIFTRIGHT] = StaticSprite(self, j, i, BLANKSLOTX, BLANKSLOTY, GEAR_LAYER)
+                       self.menuboxes[INVSLIDER] = StaticSprite(self, j, i, BLANKSLOTX, BLANKSLOTY, INVBAR_LAYER)
+                    if column == "M":
+                        StaticSprite(self, j, i, MAINMENUWALLX, MAINMENUWALLY, BLOCK_LAYER)
+                    if column == "B":
+                        StaticSprite(self, j, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
 #Roll a Natural 20 on the dice.
 #Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
 #If the attack roll from Step 2 is a hit, roll your damage twice and add the result of both rolls together.

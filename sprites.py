@@ -516,6 +516,9 @@ class StaticSprite(pygame.sprite.Sprite):
             self.groups = self.game.all_sprites, self.game.blocks#, self.game.dialognpc - can I use hasdialog flag??
             self.image = self.game.enemy_spritesheet.get_sprite(ENEMYX, ENEMYY, self.width, self.height)
             #NPClist.append(dialog_npc) - to check through and get dialog
+        elif layer == INVBAR_LAYER:
+            self.groups = self.game.all_sprites, self.game.item_sprites#, self.game.dialognpc - can I use hasdialog flag??
+            self.image = self.game.npc_textsheet.get_sprite(BLANKSLOTX, BLANKSLOTY, 450, 85)
         else: #GROUND_LAYER, INIT_LAYER
             self.groups = self.game.all_sprites
             self.image = self.game.temp_spritesheet.get_sprite(pixx, pixy, self.width, self.height)
