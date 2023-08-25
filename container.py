@@ -49,8 +49,8 @@ class CharacterSheet(Player):
         #self.gear[HEAD].move_layer(INIT_LAYER)
         #CLEAR THE SWORD DRAWN TO SCREEN
         ##  BUT THEN HOW DO I DRAW LATER, RE- ADD??
-        #for sprite in self.game.item_sprites:
-        #    sprite.kill()
+        for sprite in self.game.item_sprites:
+            sprite.kill()
         
     #any time gear is equipped, unequipped, debuffs, buffs, etc
     def calculate_stats(self):
