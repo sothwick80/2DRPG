@@ -46,6 +46,8 @@ class Item(pygame.sprite.Sprite):
         self.effect = 0 #if item has an effect
         self.atk = 0
         self.ac = 0
+
+        #VALUE = COIN TO PURCHASE
         self.value = 0
         self.id = itemid
         
@@ -54,6 +56,7 @@ class Item(pygame.sprite.Sprite):
             self.description = "This potion heals a small boo boo" #description of item
             self.equip = False #if equippable, if not put in inventory directly
             self.effect = MINORRELIEF #if item has an effect
+            self.value = 3
             self.image = self.game.items_spritesheet.get_sprite(POTIONX, POTIONY, self.width, self.height)
             #get a pic for the item as well, put it here - sprite sheet but does it have to be a whole sprite?
         elif itemid == SWORD:
@@ -61,12 +64,14 @@ class Item(pygame.sprite.Sprite):
             self.description = "Barely a sword." #description of item
             self.equip = True #if equippable, if not put in inventory directly
             self.atk = 4 #attack die associated
+            self.value = 5
             self.image = self.game.items_spritesheet.get_sprite(SWORDX, SWORDY, self.width, self.height)
         elif itemid == SHIRT:
             self.name = "Rusty Sword" #name of the item
             self.description = "Barely a sword." #description of item
             self.equip = True #if equippable, if not put in inventory directly
             self.atk = 4 #attack die associated
+            self.value = 15
             self.image = self.game.items_spritesheet.get_sprite(SHIRTX, SHIRTY, self.width, self.height)
         elif itemid == BLANK:
             self._layer = INIT_LAYER
@@ -76,6 +81,11 @@ class Item(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+        def get_value():
+            return self.value
+            
+
+#INTERACTIBLE USER CONTROLLED SPRITE - WITH SPRITE / CONTROL / ANIMATION INFO
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
 

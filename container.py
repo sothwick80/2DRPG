@@ -2,6 +2,7 @@ import pygame
 from config import *
 from sprites import *
 
+#PUTS A CHARACTERSHEET OVERLAY ONTO THE PLAYER CLASS ALLOWING D&D STYLE ADVENTURES
 class CharacterSheet(Player):
     def __init__(self, game, x, y):
         Player.__init__(self, game, x, y)
@@ -25,6 +26,7 @@ class CharacterSheet(Player):
         self.hp = self.mp = self.init = 0
         self.ac = 10 + self.dexmod #+ gear
         
+        self.coin = 10
         self.inventory = []
         self.gear = []
         self.playertimer = pygame.event.custom_type()
@@ -91,7 +93,7 @@ class MobSheet(Enemy):
 
         self.temp = 1
         while self.temp < NUMOFGEARSLOTS:
-            self.gear.append(Item(self.game, 10, 10, BLANK))
+            self.gear.append(Item(self.game, 0, 0, BLANK))
             self.temp += 1
 
         #give a sword to pretend battle

@@ -434,18 +434,22 @@ class Game:
                                     self.oncursor = False
                         i += 1
                 elif self.inmerchant:
-                    #ITEMS DISAPPEAR WHEN PICKED UP FOR SOME REASON
                     i = 0
                     while i < self.merchantboxes.__len__():
                         if self.merchantboxes[i].rect.collidepoint(mouse_pos):
                             if not self.oncursor:
-                                print ("Picking Up Merchant Item")
-                                self.oncursor = True
-                                pygame.mouse.set_visible(False) 
-                                #get mouse pos for cursor sprite
-                                tempcoord = pygame.mouse.get_pos()
-                                #PULL ITEM FROM INDEX WHERE YOU'RE CLICKING (UHHHH HOW ????) DO DISPLAY ITEM
-                                self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], self.dialognpc[self.current_merchant].itemsforsale[i])
+                                if self.party[self.top_character].coin < self.merchantboxes[i].value:
+                                    print ("You don't have enough money.")
+                                else:
+                                    print ("Picking Up Merchant Item")
+                                    #TAKE COIN FOR THE PURCHASE
+                                    self.party[self.top_character].coin -= self.merchantboxes[i].value
+                                    self.oncursor = True
+                                    pygame.mouse.set_visible(False) 
+                                    #get mouse pos for cursor sprite
+                                    tempcoord = pygame.mouse.get_pos()
+                                    #PULL ITEM FROM INDEX WHERE YOU'RE CLICKING (UHHHH HOW ????) DO DISPLAY ITEM
+                                    self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], self.dialognpc[self.current_merchant].itemsforsale[i])
                             else:
                                 print("Dropping Into Merchant")
                                 self.menuboxes[CURSOR].kill()
