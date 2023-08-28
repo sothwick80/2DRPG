@@ -30,6 +30,9 @@ class Game:
         #list of Players for party
         self.party = []
 
+        #true / false for whether slot is taken
+        self.inventory_flag = []
+
         #LIST OF BATTLE ENEMIES
         self.mobs = []
 
@@ -116,6 +119,15 @@ class Game:
             self.merchantboxes.append(Item(self, 0, 0, BLANK))
             temp += 1        
         
+        temp = 0
+        while temp < NUMOFINVENTORYSLOTS:
+            self.inventory_flag.append(False)
+            temp += 1
+        
+        self.inventory_flag[0] = True
+        self.inventory_flag[1] = True
+        self.inventory_flag[2] = True
+
     def showDialog(self, dialog):
         tempx = 1
         #ERASE SHOWING TEXT
@@ -405,7 +417,7 @@ class Game:
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
-
+            ## WHILE ON CURSOR SPRITES ARE DRAWN UNDER SOME MENU SLOTS
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.inmenu:
@@ -434,6 +446,28 @@ class Game:
                                 self.createTilemap(CHARACTERMENU)
                             elif i == ARMS:
                                 print("Picking Up - Arms")
+                            elif i == PRIMARY: ## NEED TO SHOW ITEM OVER SLOT WHEN DROPPED
+                                if not self.oncursor:
+                                    #IF THERE IS AN EQUIPPED ITEM, PICK IT UP
+                                    print ("Picking Up - Primary Slot")
+                                    self.oncursor = True
+                                    pygame.mouse.set_visible(False) 
+                                    #get mouse pos for cursor sprite
+                                    tempcoord = pygame.mouse.get_pos()
+                                    #PUT ITEM FROM HEAD SLOT ON CURSOR
+                                    self.menuboxes[CURSOR] = self.party[self.top_character].gear[PRIMARY]
+                                else:
+                                    #if item on cursor can go in the clicked spot 
+                                    if self.menuboxes[CURSOR].slot == PRIMARY:
+                                        print("Dropping Into Primary Slot")
+                                        self.party[self.top_character].gear[PRIMARY] = self.menuboxes[CURSOR]
+                                        #self.menuboxes[CURSOR].kill()
+                                        #self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
+                                        pygame.mouse.set_visible(True)
+                                        self.oncursor = False
+                                        #calculate stats
+                                    else:
+                                        print("This does not go in this slot")
                             elif i == HEAD:
                                 if not self.oncursor:
                                     #IF THERE IS AN EQUIPPED ITEM, PICK IT UP
@@ -443,17 +477,42 @@ class Game:
                                     #get mouse pos for cursor sprite
                                     tempcoord = pygame.mouse.get_pos()
                                     #PUT ITEM FROM HEAD SLOT ON CURSOR
-                                    self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], self.party[self.top_character].gear[HEAD].id)
+                                    #self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], self.party[self.top_character].gear[HEAD].id)
+                                    self.menuboxes[CURSOR] = self.party[self.top_character].gear[HEAD]
                                 else:
-                                    print("Dropping Into Head Slot")
-                                    self.menuboxes[CURSOR].kill()
-                                    self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
-                                    pygame.mouse.set_visible(True)
-                                    self.oncursor = False
+                                    #if item on cursor can go in the clicked spot 
+                                    if self.menuboxes[CURSOR].slot == HEAD:
+                                        print("Dropping Into Head Slot")
+                                        #self.menuboxes[CURSOR].kill()
+                                        self.party[self.top_character].gear[HEAD] = self.menuboxes[CURSOR]
+                                        #self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
+                                        pygame.mouse.set_visible(True)
+                                        self.oncursor = False
+                                        #calculate stats
+                                    else:
+                                        print("This does not go in this slot")
                             elif i == INVBOXA:
-                                if not self.oncursor: #TRY TO PICK UP FROM THAT SLOT
-                                    print("Box Fresh !")
-                                else:#TRY TO PUT SOMETHING HERE
+                                if not self.oncursor:
+                                    #IF THERE IS AN EQUIPPED ITEM, PICK IT UP
+                                    print ("Picking Up First Inventory Slot")
+                                    self.oncursor = True
+                                    pygame.mouse.set_visible(False) 
+                                    #get mouse pos for cursor sprite
+                                    tempcoord = pygame.mouse.get_pos()
+                                    #PUT ITEM FROM HEAD SLOT ON CURSOR
+                                    #self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], self.party[self.top_character].inventory[0].id)
+                                    self.menuboxes[CURSOR] = self.party[self.top_character].inventory[0]
+                                    self.inventory_flag[0] = False #INVBOXA is now empty
+                                else:#if item can go in this slot
+                                    if self.inventory_flag[0] == False:
+                                        print("Dropping Into First Inventory Slot")
+                                        self.party[self.top_character].inventory[0] = self.menuboxes[CURSOR]
+                                        #self.menuboxes[CURSOR].kill()
+                                        #self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
+                                        pygame.mouse.set_visible(True)
+                                        self.oncursor = False
+                                        self.inventory_flag[0] == True
+                                        #calculate stats
                                     pass
                         i += 1
                 elif self.inmerchant:

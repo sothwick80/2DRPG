@@ -46,6 +46,7 @@ class Item(pygame.sprite.Sprite):
         self.effect = 0 #if item has an effect
         self.atk = 0
         self.ac = 0
+        self.slot = 0 #which slot it can be placed into
 
         #VALUE = COIN TO PURCHASE
         self.value = 0
@@ -57,6 +58,7 @@ class Item(pygame.sprite.Sprite):
             self.equip = False #if equippable, if not put in inventory directly
             self.effect = MINORRELIEF #if item has an effect
             self.value = 3
+            self.slot = INVENTORY
             self.image = self.game.items_spritesheet.get_sprite(POTIONX, POTIONY, self.width, self.height)
             #get a pic for the item as well, put it here - sprite sheet but does it have to be a whole sprite?
         elif itemid == SWORD:
@@ -65,6 +67,7 @@ class Item(pygame.sprite.Sprite):
             self.equip = True #if equippable, if not put in inventory directly
             self.atk = 4 #attack die associated
             self.value = 5
+            self.slot = PRIMARY
             self.image = self.game.items_spritesheet.get_sprite(SWORDX, SWORDY, self.width, self.height)
         elif itemid == SHIRT:
             self.name = "Rusty Sword" #name of the item
@@ -72,6 +75,7 @@ class Item(pygame.sprite.Sprite):
             self.equip = True #if equippable, if not put in inventory directly
             self.atk = 4 #attack die associated
             self.value = 15
+            self.slot = HEAD
             self.image = self.game.items_spritesheet.get_sprite(SHIRTX, SHIRTY, self.width, self.height)
         elif itemid == BLANK:
             self._layer = INIT_LAYER
@@ -275,25 +279,6 @@ class Player(pygame.sprite.Sprite):
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
 
-#Sprites that contain items
-#class ItemBlockSprite(pygame.sprite.Sprite):
-#    def __init__(self, game, x, y, pixx, pixy):
-#        self.game = game
-#        self._layer = BLOCK_LAYER
-        
-#        self.x = x * TILESIZE
-#        self.y = y * TILESIZE
-#        self.width = TILESIZE  
- #       self.height = TILESIZE
-
-#        self.groups = self.game.all_sprites, self.game.blocks
-#        self.image = self.game.temp_spritesheet.get_sprite(pixx, pixy, self.width, self.height)
-
-#        pygame.sprite.Sprite.__init__(self, self.groups)
-#       self.rect = self.image.get_rect()
-#        self.rect.x = self.x
- #       self.rect.y = self.y
-
 class AnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -398,6 +383,8 @@ class AnimatedSprite(pygame.sprite.Sprite):
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
 
+
+## FORMERLY ANIMATED SPRITE CLASS ##
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
 
