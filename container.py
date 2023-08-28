@@ -28,7 +28,7 @@ class CharacterSheet(Player):
         
         self.coin = 10
         self.inventory = []
-        self.gear = []
+        #self.gear = []
         self.playertimer = pygame.event.custom_type()
 
         #INITIALIZE LISTS inventory starts at 1
@@ -37,20 +37,22 @@ class CharacterSheet(Player):
             self.inventory.append(Item(self.game, 0, 0, BLANK))
             self.temp += 1
 
-        self.temp = 1
-        while self.temp < NUMOFGEARSLOTS:
-            self.gear.append(Item(self.game, 0, 0, BLANK))
-            self.temp += 1
+        #self.temp = 1
+        #while self.temp < NUMOFGEARSLOTS:
+            #self.gear.append(Item(self.game, 0, 0, BLANK))
+            #self.temp += 1
 
         #giving inventory to try to draw to screen
-        self.inventory[0] = Item(self.game, 0, 0, SWORD)
-        self.inventory[1] = Item(self.game, 0, 0, SHIRT)
-        self.inventory[2] = Item(self.game, 0, 0, POTION)
+        self.inventory[INVBOXA] = Item(self.game, 0, 0, SWORD)
+        self.inventory[INVBOXB] = Item(self.game, 0, 0, SHIRT)
+        self.inventory[INVBOXC] = Item(self.game, 0, 0, POTION)
         #give a sword to pretend battle
-        self.gear[PRIMARY] = Item(self.game, 10, 10, SWORD)
+        #self.gear[PRIMARY] = Item(self.game, 10, 10, SWORD)
+        self.inventory[PRIMARY] = Item(self.game, 10, 10, SWORD)
+        self.inventory[HEAD] = Item(self.game, 10, 10, SHIRT)
         #self.gear[PRIMARY].move_layer(INIT_LAYER)
         #self.gear[PRIMARY].id = SWORD
-        self.gear[HEAD].id = SHIRT
+        #self.gear[HEAD].id = SHIRT
         #self.gear[HEAD] = Item(self.game, 10, 10, SHIRT)
         #self.gear[HEAD].move_layer(INIT_LAYER)
         #CLEAR THE SWORD DRAWN TO SCREEN

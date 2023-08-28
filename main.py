@@ -265,20 +265,39 @@ class Game:
                     if column == "H":
                         self.menuboxes[HEAD] = StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, GEAR_LAYER)
                         #SHOWING ITEM IN THIS GEAR SLOT - SEEMS LIKE I'M REDRAWING TOO MUCH MAYBE ?
-                        tempid = self.party[self.top_character].gear[HEAD].id
-                        self.party[self.top_character].gear[HEAD] = Item(self, j, i, tempid)        
+                        tempid = self.party[self.top_character].inventory[HEAD].id
+                        if tempid > 0:
+                            self.party[self.top_character].inventory[HEAD] = Item(self, j, i, tempid)        
                     if column == "C":
                         self.menuboxes[CHEST] = StaticSprite(self, j, i, CHESTSLOTX, CHESTSLOTY, GEAR_LAYER)
+                        tempid = self.party[self.top_character].inventory[CHEST].id
+                        if tempid > 0:
+                            self.party[self.top_character].inventory[CHEST] = Item(self, j, i, tempid)
                     if column == "R":
                         self.menuboxes[ARMS] = StaticSprite(self, j, i, ARMSSLOTX, ARMSSLOTY, GEAR_LAYER)
+                        tempid = self.party[self.top_character].inventory[ARMS].id
+                        if tempid > 0:
+                            self.party[self.top_character].inventory[ARMS] = Item(self, j, i, tempid)
                     if column == "L":
                         self.menuboxes[LEGS] = StaticSprite(self, j, i, LEGSSLOTX, LEGSSLOTY, GEAR_LAYER)
+                        tempid = self.party[self.top_character].inventory[LEGS].id
+                        if tempid > 0:
+                            self.party[self.top_character].inventory[LEGS] = Item(self, j, i, tempid)
                     if column == "F":
                         self.menuboxes[FEET] = StaticSprite(self, j, i, FEETSLOTX, FEETSLOTY, GEAR_LAYER)
+                        tempid = self.party[self.top_character].inventory[FEET].id
+                        if tempid > 0:
+                            self.party[self.top_character].inventory[FEET] = Item(self, j, i, tempid)
                     if column == "P":
                         self.menuboxes[PRIMARY] = StaticSprite(self, j, i, PRIMARYSLOTX, PRIMARYSLOTY, GEAR_LAYER)
+                        tempid = self.party[self.top_character].inventory[PRIMARY].id
+                        if tempid > 0:
+                            self.party[self.top_character].inventory[PRIMARY] = Item(self, j, i, tempid)
                     if column == "S":
-                       self.menuboxes[SECONDARY] = StaticSprite(self, j, i, SECONDARYSLOTX, SECONDARYSLOTY, GEAR_LAYER)
+                        self.menuboxes[SECONDARY] = StaticSprite(self, j, i, SECONDARYSLOTX, SECONDARYSLOTY, GEAR_LAYER)
+                        tempid = self.party[self.top_character].inventory[SECONDARY].id
+                        if tempid > 0:
+                            self.party[self.top_character].inventory[SECONDARY] = Item(self, j, i, tempid)
                     if column == "U":
                         self.menuboxes[SHIFTLEFT] = StaticSprite(self, j, i, SHIFTLEFTX, SHIFTLEFTY, GEAR_LAYER)
                     if column == "Z":
@@ -293,10 +312,18 @@ class Game:
                         StaticSprite(self, j, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
             
             ## NOW DRAW ITEMS IN INVENTORY OVER THE [SLIDECOUNTER] SLOTS
-            for i in range(self.party[self.top_character].inventory.__len__()):
-                tempid = self.party[self.top_character].inventory[i].id
+            tempn = NUMOFGEARSLOTS
+            while tempn < NUMOFINVENTORYSLOTS - 1:
+                tempid = self.party[self.top_character].inventory[tempn].id
                 if tempid > 0:
-                    self.party[self.top_character].inventory[i] = Item(self, 4 + i, 16, tempid)
+                    self.party[self.top_character].inventory[tempn] = Item(self, tempn - 10, 16, tempid)
+                    #tempn - 10 is positioning on screen
+                tempn +=1
+
+            #for i in range(self.party[self.top_character].inventory.__len__()):
+            #    tempid = self.party[self.top_character].inventory[i].id
+            #    if tempid > 0:
+            #        self.party[self.top_character].inventory[i] = Item(self, 4 + i, 16, tempid)
             #force draw new sprites
             #self.draw()
             #self.update()
@@ -455,12 +482,12 @@ class Game:
                                     #get mouse pos for cursor sprite
                                     tempcoord = pygame.mouse.get_pos()
                                     #PUT ITEM FROM HEAD SLOT ON CURSOR
-                                    self.menuboxes[CURSOR] = self.party[self.top_character].gear[PRIMARY]
+                                    self.menuboxes[CURSOR] = self.party[self.top_character].inventory[PRIMARY]
                                 else:
                                     #if item on cursor can go in the clicked spot 
                                     if self.menuboxes[CURSOR].slot == PRIMARY:
                                         print("Dropping Into Primary Slot")
-                                        self.party[self.top_character].gear[PRIMARY] = self.menuboxes[CURSOR]
+                                        self.party[self.top_character].inventory[PRIMARY] = self.menuboxes[CURSOR]
                                         #self.menuboxes[CURSOR].kill()
                                         #self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
                                         pygame.mouse.set_visible(True)
@@ -478,13 +505,13 @@ class Game:
                                     tempcoord = pygame.mouse.get_pos()
                                     #PUT ITEM FROM HEAD SLOT ON CURSOR
                                     #self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], self.party[self.top_character].gear[HEAD].id)
-                                    self.menuboxes[CURSOR] = self.party[self.top_character].gear[HEAD]
+                                    self.menuboxes[CURSOR] = self.party[self.top_character].inventory[HEAD]
                                 else:
                                     #if item on cursor can go in the clicked spot 
                                     if self.menuboxes[CURSOR].slot == HEAD:
                                         print("Dropping Into Head Slot")
                                         #self.menuboxes[CURSOR].kill()
-                                        self.party[self.top_character].gear[HEAD] = self.menuboxes[CURSOR]
+                                        self.party[self.top_character].inventory[HEAD] = self.menuboxes[CURSOR]
                                         #self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
                                         pygame.mouse.set_visible(True)
                                         self.oncursor = False
@@ -501,12 +528,12 @@ class Game:
                                     tempcoord = pygame.mouse.get_pos()
                                     #PUT ITEM FROM HEAD SLOT ON CURSOR
                                     #self.menuboxes[CURSOR] = Item(self, tempcoord[0], tempcoord[1], self.party[self.top_character].inventory[0].id)
-                                    self.menuboxes[CURSOR] = self.party[self.top_character].inventory[0]
+                                    self.menuboxes[CURSOR] = self.party[self.top_character].inventory[INVBOXA]
                                     self.inventory_flag[0] = False #INVBOXA is now empty
                                 else:#if item can go in this slot
                                     if self.inventory_flag[0] == False:
                                         print("Dropping Into First Inventory Slot")
-                                        self.party[self.top_character].inventory[0] = self.menuboxes[CURSOR]
+                                        self.party[self.top_character].inventory[INVBOXA] = self.menuboxes[CURSOR]
                                         #self.menuboxes[CURSOR].kill()
                                         #self.menuboxes[CURSOR] = StaticSprite(self, 0, 0, 0, 0, GROUND_LAYER)
                                         pygame.mouse.set_visible(True)
