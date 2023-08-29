@@ -47,6 +47,7 @@ class Item(pygame.sprite.Sprite):
         self.atk = 0
         self.ac = 0
         self.slot = 0 #which slot it can be placed into
+        self.str = self.dex = self.vit = self.int = self.spr = 0
 
         #VALUE = COIN TO PURCHASE
         self.value = 0
@@ -67,6 +68,7 @@ class Item(pygame.sprite.Sprite):
             self.equip = True #if equippable, if not put in inventory directly
             self.atk = 4 #attack die associated
             self.value = 5
+            self.str = 5
             self.slot = PRIMARY
             self.image = self.game.items_spritesheet.get_sprite(SWORDX, SWORDY, self.width, self.height)
         elif itemid == SHIRT:
@@ -496,10 +498,13 @@ class StaticSprite(pygame.sprite.Sprite):
             #STATIC GEAR LAYER IS MENU BACKGROUND FOR HEAD / CHEST / ARMS / ETC
             self.groups = self.game.all_sprites, self.game.item_sprites
             self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 40, 47)
-        elif layer == MENU_LAYER:
-            #100, 85 IS SIZE OF EXIT / CHARACTER BUTTONS
+        #elif layer == MENU_LAYER:
+            #self.groups = self.game.all_sprites, self.game.menu_sprites
+            #self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 10, 65)
+        elif layer == BUTTONS_LAYER:
+            #MENU / CHARACTER / SPELLS BUTTON
             self.groups = self.game.all_sprites, self.game.menu_sprites
-            self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 100, 85)
+            self.image = self.game.npc_textsheet.get_sprite(pixx, pixy, 100, 46)
         elif layer == DIALOGNPC_LAYER: 
             self.groups = self.game.all_sprites, self.game.blocks#, self.game.dialognpc - can I use hasdialog flag??
             self.image = self.game.enemy_spritesheet.get_sprite(ENEMYX, ENEMYY, self.width, self.height)
@@ -519,6 +524,7 @@ class StaticSprite(pygame.sprite.Sprite):
 class TextSprite(pygame.sprite.Sprite):
     def __init__(self, game, x, y, char):
         self.game = game
+        self._layer = TEXT_LAYER
         #DISPLAY GROUPS
         self.groups = self.game.all_sprites, self.game.text
         
@@ -632,11 +638,33 @@ class TextSprite(pygame.sprite.Sprite):
         elif char == 'z':
             self.image = self.game.npc_textsheet.get_sprite(425, 16, TILESIZE / 2, TILESIZE / 2)
         elif char == '.':
-            self.image = self.game.npc_textsheet.get_sprite(442, 32, TILESIZE / 2, TILESIZE / 2)
+            self.image = self.game.npc_textsheet.get_sprite(442, 16, TILESIZE / 2, TILESIZE / 2)
         elif char == ',':
-            self.image = self.game.npc_textsheet.get_sprite(459, 32, TILESIZE / 2, TILESIZE / 2)
-        else:
+            self.image = self.game.npc_textsheet.get_sprite(459, 16, TILESIZE / 2, TILESIZE / 2)
+        elif char == ':':
             self.image = self.game.npc_textsheet.get_sprite(442, 0, TILESIZE / 2, TILESIZE / 2)
+        elif char == '1':
+            self.image = self.game.npc_textsheet.get_sprite(0, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '2':
+            self.image = self.game.npc_textsheet.get_sprite(17, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '3':
+            self.image = self.game.npc_textsheet.get_sprite(33, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '4':
+            self.image = self.game.npc_textsheet.get_sprite(50, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '5':
+            self.image = self.game.npc_textsheet.get_sprite(67, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '6':
+            self.image = self.game.npc_textsheet.get_sprite(85, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '7':
+            self.image = self.game.npc_textsheet.get_sprite(101, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '8':
+            self.image = self.game.npc_textsheet.get_sprite(119, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '9':
+            self.image = self.game.npc_textsheet.get_sprite(136, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '0':
+            self.image = self.game.npc_textsheet.get_sprite(152, 32, TILESIZE / 2, TILESIZE / 2)
+        else:
+            self.image = self.game.npc_textsheet.get_sprite(459, 0, TILESIZE / 2, TILESIZE / 2)
 
         pygame.sprite.Sprite.__init__(self, self.groups)
 

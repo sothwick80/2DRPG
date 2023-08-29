@@ -12,6 +12,7 @@ class CharacterSheet(Player):
         
         #default starting stats
         self.lvl = 1
+        self.exp = 0
         #str governs attack damage, weight limit
         self.str = self.strmod = 0
         #vitality governs hit points, hit points regen & constitution saves
@@ -37,36 +38,55 @@ class CharacterSheet(Player):
             self.inventory.append(Item(self.game, 0, 0, BLANK))
             self.temp += 1
 
-        #self.temp = 1
-        #while self.temp < NUMOFGEARSLOTS:
-            #self.gear.append(Item(self.game, 0, 0, BLANK))
-            #self.temp += 1
-
-        #giving inventory to try to draw to screen
-        #self.inventory[INVBOXA] = Item(self.game, 0, 0, SWORD)
-        #self.inventory[INVBOXB] = Item(self.game, 0, 0, SHIRT)
-        #self.inventory[INVBOXC] = Item(self.game, 0, 0, POTION)
         #give a sword to pretend battle
         #self.gear[PRIMARY] = Item(self.game, 10, 10, SWORD)
         self.inventory[PRIMARY] = Item(self.game, 10, 10, SWORD)
         self.inventory[HEAD] = Item(self.game, 10, 10, SHIRT)
-        #self.gear[PRIMARY].move_layer(INIT_LAYER)
-        #self.gear[PRIMARY].id = SWORD
-        #self.gear[HEAD].id = SHIRT
-        #self.gear[HEAD] = Item(self.game, 10, 10, SHIRT)
-        #self.gear[HEAD].move_layer(INIT_LAYER)
-        #CLEAR THE SWORD DRAWN TO SCREEN
+
         ##  BUT THEN HOW DO I DRAW LATER, RE- ADD??
         for sprite in self.game.item_sprites:
             sprite.kill()
         
     #any time gear is equipped, unequipped, debuffs, buffs, etc
     def calculate_stats(self):
-        pass
+        self.str = self.inventory[HEAD].str + self.inventory[ARMS].str + self.inventory[CHEST].str + self.inventory[LEGS].str + self.inventory[FEET].str + self.inventory[PRIMARY].str + self.inventory[SECONDARY].str
+        self.strmod = self.str // 5 #str mod 5 for str modifier
+
+        self.vit = self.inventory[HEAD].vit + self.inventory[ARMS].vit + self.inventory[CHEST].vit + self.inventory[LEGS].vit + self.inventory[FEET].vit + self.inventory[PRIMARY].vit + self.inventory[SECONDARY].vit
+        self.vitmod = self.vit // 5 #str mod 5 for str modifier
+
+        self.dex = self.inventory[HEAD].dex + self.inventory[ARMS].dex + self.inventory[CHEST].dex + self.inventory[LEGS].dex + self.inventory[FEET].dex + self.inventory[PRIMARY].dex + self.inventory[SECONDARY].dex
+        self.dexmod = self.dex // 5 #str mod 5 for str modifier
+
+        self.int = self.inventory[HEAD].int + self.inventory[ARMS].int + self.inventory[CHEST].int + self.inventory[LEGS].int + self.inventory[FEET].int + self.inventory[PRIMARY].int + self.inventory[SECONDARY].int
+        self.intmod = self.int // 5 #str mod 5 for str modifier
+
+        self.spr = self.inventory[HEAD].spr + self.inventory[ARMS].spr + self.inventory[CHEST].spr + self.inventory[LEGS].spr + self.inventory[FEET].spr + self.inventory[PRIMARY].spr + self.inventory[SECONDARY].spr
+        self.sprmod = self.spr // 5 #str mod 5 for str modifier
+
+        self.hp = 10 + self.vitmod + (5 * self.lvl)
+        #calculate level
+        
     
     #use a skill or ability
     def skill_ability(self):
         pass
+
+    def display_stats(self):
+        self.game.showDialog(10, 2, "HP: ")
+        self.game.showDialog(12, 2, str(self.hp))
+        self.game.showDialog(10, 3, "Str: ")
+        self.game.showDialog(12, 3, str(self.str))
+        self.game.showDialog(10, 4, "Vit: ")
+        self.game.showDialog(12, 4, str(self.vit))
+        self.game.showDialog(10, 5, "Dex: ")
+        self.game.showDialog(12, 5, str(self.dex))
+        self.game.showDialog(10, 6, "Int: ")
+        self.game.showDialog(12, 6, str(self.int))
+        self.game.showDialog(10, 7, "Spr: ")
+        self.game.showDialog(12, 7, str(self.spr))
+        
+        
 
 class MobSheet(Enemy):
     def __init__(self, game, x, y):

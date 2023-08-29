@@ -100,6 +100,7 @@ class Game:
         #CREATE PLAYER AND ADD TO PARTY
         #self.party.append(Player(self, 10, 10))
         self.party.append(CharacterSheet(self, 10, 10))
+        self.party[self.top_character].calculate_stats()
         self.createTilemap(self.current_zone.id)
         
         #DIALOG
@@ -128,18 +129,19 @@ class Game:
         self.inventory_flag[PRIMARY] = True
         #self.inventory_flag[2] = True
 
-    def showDialog(self, dialog):
-        tempx = 1
+    def showDialog(self, xpos, ypos, dialog):
+        tempx = xpos
         #ERASE SHOWING TEXT
-        for sprite in self.text:
-            sprite.kill()
+        #for sprite in self.text:
+            #sprite.kill()
         
         #IF DIALOG IS OVER, KILL SPRITES
         if dialog == "kill":
             self.in_dialog = False
         else:
-            for x in dialog:
-                TextSprite(self, tempx, 1, x)
+            for n in dialog:
+                
+                TextSprite(self, tempx, ypos, n)
                 tempx += CHARACTER_SPACING #SPACING BETWEEN CHARACTERS
 
     def createTilemap(self, map):
@@ -214,7 +216,7 @@ class Game:
             self.enemies.empty()
             self.zonelines.empty()
 
-            print ("Length is ", self.menuboxes.__len__())
+            #print ("Length is ", self.menuboxes.__len__())
             for i, row in enumerate(map):
                 for j, column in enumerate(row):
                     StaticSprite(self, j, i, MAINMENUGROUNDX, MAINMENUGROUNDY, GROUND_LAYER)
@@ -222,11 +224,11 @@ class Game:
                         StaticSprite(self, j, i, MAINMENUWALLX, MAINMENUWALLY, BLOCK_LAYER)
                     ## THESE CLICKABLE SPRITES HAVE TO BE PUT INTO THE MAP IN A SPECIFIC ORDER FOR COLLISION
                     if column == "E":
-                        self.menuboxes[EXIT] = StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, TEXT_LAYER)
+                        self.menuboxes[EXIT] = StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, BUTTONS_LAYER)
                     if column == "G":
-                        self.menuboxes[CHARACTER] = StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, TEXT_LAYER)
+                        self.menuboxes[CHARACTER] = StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, BUTTONS_LAYER)
                     if column == "Q":
-                        self.menuboxes[SPELLS] = StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, TEXT_LAYER)
+                        self.menuboxes[SPELLS] = StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, BUTTONS_LAYER)
 
         elif map == MERCHANTMENU:
             for i, row in enumerate(map):
@@ -257,11 +259,11 @@ class Game:
                         StaticSprite(self, j, i, MAINMENUWALLX, MAINMENUWALLY, BLOCK_LAYER)
                     ## THESE CLICKABLE SPRITES HAVE TO BE PUT INTO THE MAP EACH TIME BC CLEARING SPRITES
                     if column == "E":
-                        self.menuboxes[EXIT] = StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, MENU_LAYER)
+                        self.menuboxes[EXIT] = StaticSprite(self, j, i, EXITBUTTONX, EXITBUTTONY, BUTTONS_LAYER)
                     if column == "G":
-                        self.menuboxes[CHARACTER] = StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, MENU_LAYER)
+                        self.menuboxes[CHARACTER] = StaticSprite(self, j, i, CHARACTERBUTTONX, CHARACTERBUTTONY, BUTTONS_LAYER)
                     if column == "Q":
-                        self.menuboxes[SPELLS] = StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, MENU_LAYER)
+                        self.menuboxes[SPELLS] = StaticSprite(self, j, i, SPELLSBUTTONX, SPELLSBUTTONY, BUTTONS_LAYER)
                     if column == "H":
                         self.menuboxes[HEAD] = StaticSprite(self, j, i, HEADSLOTX, HEADSLOTY, GEAR_LAYER)
                         #SHOWING ITEM IN THIS GEAR SLOT - SEEMS LIKE I'M REDRAWING TOO MUCH MAYBE ?
@@ -319,6 +321,9 @@ class Game:
                     self.party[self.top_character].inventory[tempn] = Item(self, tempn - 10, 16, tempid)
                     #tempn - 10 is positioning on screen
                 tempn +=1
+            
+            self.party[self.top_character].display_stats()
+            #self.showDialog(5, 5, "Strength")
 
             #for i in range(self.party[self.top_character].inventory.__len__()):
             #    tempid = self.party[self.top_character].inventory[i].id
@@ -328,7 +333,6 @@ class Game:
             #self.draw()
             #self.update()
             
-
 #Roll a Natural 20 on the dice.
 #Roll the dice again with all the exact same bonuses that were applied to the Natural 20 roll.
 #If the attack roll from Step 2 is a hit, roll your damage twice and add the result of both rolls together.
@@ -630,11 +634,12 @@ class Game:
                         if pygame.sprite.collide_rect_ratio(1.1)(self.party[self.top_character], self.dialognpc[tempint]):
                             print("Hit NPC")
                             self.in_dialog = True #we are now in a dialog
+                            
                             #set temp info to pass along to if indialog
                             self.tempindex = 0
                             self.templength = self.dialognpc[tempint].dialoglength
                             self.tempdialog = self.dialognpc[tempint].dialog
-                            self.showDialog(self.tempdialog[self.tempindex])
+                            self.showDialog(1, 1, self.tempdialog[self.tempindex])
                             #IF THIS DIALOG IS A MERCHANT, ALSO DISPLAY WINDOW WITH ITEMS FOR SALE
                             if self.dialognpc[tempint].id == MERCHANT:
                                 self.inmerchant = True
@@ -660,6 +665,8 @@ class Game:
                         tempint += 1  
 
                 elif event.key == pygame.K_e and self.in_dialog:
+                    for sprite in self.text:
+                        sprite.kill()
                     #when a player is in a dialog, continue on or exit
                     self.tempindex += 1 #increase to next index
                     print("Is", self.templength, ">", self.tempindex)
@@ -667,7 +674,7 @@ class Game:
                     if self.templength > self.tempindex:
                         print ("Next dialog")
                         #call the next line, and do so until over
-                        self.showDialog(self.tempdialog[self.tempindex])
+                        self.showDialog(1, 1, self.tempdialog[self.tempindex])
                 
                     else:
                         print("End of dialog.")
@@ -676,7 +683,7 @@ class Game:
                         self.in_dialog = False
                         self.inmerchant = False
                         #input -1 into showDialog to end dialog mode
-                        self.showDialog("kill")
+                        self.showDialog(0, 0, "kill")
                    
     def update(self):
         #if there's something on the cursor, update to the mouse position
