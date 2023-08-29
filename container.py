@@ -43,9 +43,9 @@ class CharacterSheet(Player):
             #self.temp += 1
 
         #giving inventory to try to draw to screen
-        self.inventory[INVBOXA] = Item(self.game, 0, 0, SWORD)
-        self.inventory[INVBOXB] = Item(self.game, 0, 0, SHIRT)
-        self.inventory[INVBOXC] = Item(self.game, 0, 0, POTION)
+        #self.inventory[INVBOXA] = Item(self.game, 0, 0, SWORD)
+        #self.inventory[INVBOXB] = Item(self.game, 0, 0, SHIRT)
+        #self.inventory[INVBOXC] = Item(self.game, 0, 0, POTION)
         #give a sword to pretend battle
         #self.gear[PRIMARY] = Item(self.game, 10, 10, SWORD)
         self.inventory[PRIMARY] = Item(self.game, 10, 10, SWORD)
