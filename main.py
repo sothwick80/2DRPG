@@ -21,6 +21,9 @@ class Game:
         #battle choice
         self.battle_input = -1
 
+        #position of battle cursor
+        self.battle_cursor = 13 #top spot is 13 increments down
+
         #if displaying dialog over zone
         self.in_dialog = False
 
@@ -54,8 +57,7 @@ class Game:
         #keep last zone for inmenu
         self.lastzone = 0
 
-        #set battle timers
-        #self.playertimer = pygame.event.custom_type()
+        #set mob battle timer (player set in CharacterSheet)
         self.mobtimer = pygame.event.custom_type()
 
         #sprite sheets
@@ -140,7 +142,6 @@ class Game:
             self.in_dialog = False
         else:
             for n in dialog:
-                
                 TextSprite(self, tempx, ypos, n)
                 tempx += CHARACTER_SPACING #SPACING BETWEEN CHARACTERS
 
@@ -208,6 +209,15 @@ class Game:
                     if column == "P":
                         self.party[self.top_character].x = j
                         self.party[self.top_character].y = i
+            
+            self.showDialog(2, 13, "Attack")
+            self.showDialog(2, 14, "Defend")
+            self.showDialog(2, 15, "Spells")
+            self.showDialog(2, 16, "Run")
+            #BATTLE OPTIONS POINTER
+            self.menuboxes[BATCURSOR] = Item(self, 5, 13, BATCURSOR)
+
+
         
         elif map == MAINMENU:
             #empty the sprite groups
@@ -378,7 +388,7 @@ class Game:
             print ("Natural 20, critical chance!")
             if (temproll + self.party[0].atkbonus) > mob.ac:
                 #random the damage die for the weapon
-                temproll2 = random.randint(1,self.party[0].gear[PRIMARY].atk)
+                temproll2 = random.randint(1,self.party[0].inventory[PRIMARY].atk)
                 #crit the damage
                 temproll2 *= 2
                 # show damage being done to mob
@@ -391,27 +401,26 @@ class Game:
             print ("Rolled a ", temproll)
             if (temproll + self.party[0].atkbonus) > mob.ac:
                 #random the damage die for the weapon
-                temproll2 = random.randint(1,self.party[0].gear[PRIMARY].atk)
+                temproll2 = random.randint(1,self.party[0].inventory[PRIMARY].atk)
                 # show damage being done to mob
                 print("Player does", temproll2 + self.party[0].atkbonus, "damage")
                 mob.hp -=  temproll2 + self.party[0].atkbonus + self.party[0].strmod
 
     def mobAttack(self, player):
-        for i in range(self.mobs.__len__()):
-            print ("Enemy ", i+1, "is attacking")
-            temproll = random.randint(1, 20)
-            if temproll == 20:
-                print ("Enemy Natural 20, critical chance!")
-            elif temproll == 1:
-                print ("Enemy Natural 1, critical miss!")
-            else:
-                print ("Rolled a ", temproll)
-                if (temproll + self.mobs[i].atkbonus) > player.ac:
-                    #random the damage die for the weapon
-                    temproll2 = random.randint(1,self.party[0].gear[PRIMARY].atk)
-                    # show damage being done to mob
-                    print("Enemy does", temproll2 + self.party[0].atkbonus, "damage")
-                    player.hp -=  temproll2 + self.party[0].atkbonus + self.party[0].strmod
+        print ("Enemy is attacking")
+        temproll = random.randint(1, 20)
+        if temproll == 20:
+            print ("Enemy Natural 20, critical chance!")
+        elif temproll == 1:
+            print ("Enemy Natural 1, critical miss!")
+        else:
+            print ("Rolled a ", temproll)
+            if (temproll + self.mobs[0].atkbonus) > player.ac:
+                #random the damage die for the weapon
+                temproll2 = random.randint(1,20) #use the weapon atk here, mob has none right now
+                # show damage being done to mob
+                print("Enemy does", temproll2 + self.mobs[0].atkbonus, "damage")
+                player.hp -=  temproll2 + self.party[0].atkbonus + self.party[0].strmod
     
     def endBattle(self):
         #stop timers
@@ -440,7 +449,7 @@ class Game:
 
         #set timers - use inits to offset
         pygame.time.set_timer(self.party[0].playertimer, 200)       
-        #pygame.time.set_timer(self.mobtimer, 300)
+        pygame.time.set_timer(self.mobtimer, 2000)
         #from here timer events take over, until battle is over
     
     def events(self):
@@ -602,27 +611,49 @@ class Game:
                 #self.playerAttack(self.mobs[1])
                 #self.checkVitals(MOBS)
             
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    if self.player.facing == 'up':
-                        Attack(self, self.player.rect.x, self.player.rect.y - TILESIZE)
-                    if self.player.facing == 'down':
-                        Attack(self, self.player.rect.x, self.player.rect.y + TILESIZE)
-                    if self.player.facing == 'left':
-                        Attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
-                    if self.player.facing == 'right':
-                        Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
+            #elif event.type == pygame.KEYDOWN:
+                #if event.key == pygame.K_SPACE:
+                    #if self.player.facing == 'up':
+                        #Attack(self, self.player.rect.x, self.player.rect.y - TILESIZE)
+                    #if self.player.facing == 'down':
+                        #Attack(self, self.player.rect.x, self.player.rect.y + TILESIZE)
+                    #if self.player.facing == 'left':
+                        #Attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
+                    #if self.player.facing == 'right':
+                        #Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
 
+            ## IN BATTLE ##
             elif event.type == pygame.KEYUP and self.in_battle:
                 if event.key == pygame.K_g:
-                    print ("g pressed - Attacking !")
-                    self.playerAttack(self.mobs[0])
-                    self.checkVitals(MOBS)
-                    pygame.time.set_timer(self.party[0].playertimer, 200) 
+                    print ("g pressed ")
+                    #self.playerAttack(self.mobs[0])
+                    #self.checkVitals(MOBS)
+                    #pygame.time.set_timer(self.party[0].playertimer, 200) 
 
-                elif event.key == pygame.K_h:
-                    print ("h pressed")
-                    self.battle_input = 2
+                elif event.key == pygame.K_e:
+                    if self.battle_cursor == 13: #attack
+                        print ("Selected - Attacking !")
+                        self.playerAttack(self.mobs[0])
+                        self.checkVitals(MOBS)
+                        pygame.time.set_timer(self.party[0].playertimer, 200)
+                
+                elif event.key == pygame.K_w:
+                    print("Bat Cursor Up")
+                    self.battle_cursor -= 1
+                    if self.battle_cursor < 13:
+                        self.battle_cursor = 16
+                    #draw cursor at new spot
+                    self.menuboxes[BATCURSOR].kill()
+                    self.menuboxes[BATCURSOR] = Item(self, 5, self.battle_cursor, BATCURSOR)
+                
+                elif event.key == pygame.K_s:
+                    print("Bat Cursor Down")
+                    self.battle_cursor += 1
+                    if self.battle_cursor > 16:
+                        self.battle_cursor = 13
+                    #draw cursor at new spot
+                    self.menuboxes[BATCURSOR].kill()
+                    self.menuboxes[BATCURSOR] = Item(self, 5, self.battle_cursor, BATCURSOR)
 
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_e and not self.in_dialog:

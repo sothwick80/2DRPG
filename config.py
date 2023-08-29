@@ -62,7 +62,7 @@ INVBOXA = 14
 INVBOXB = 15
 INVBOXC = 16
 INVBOXD = 17
-
+BATCURSOR = 18
 
 MERCHANTONE = 14
 MERCHANTTWO = 15
@@ -78,6 +78,7 @@ SWORD = 2
 SHIRT = 3
 COIN = 4
 INVENTORY = 5
+#BATCURSOR = 18
 
 POTIONX = 128
 POTIONY = 160
@@ -190,11 +191,11 @@ KELETHINBATTLE = [
 'A.......................A',
 'A.......................A',
 'BBBBBBBBBBBBBBBBBBBBBBBBB',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
-'B.......................B',
+'B......B................B',
+'B......B................B',
+'B......B................B',
+'B......B................B',
+'B......B................B',
 'BBBBBBBBBBBBBBBBBBBBBBBBB',
 ]
 
@@ -280,6 +281,8 @@ CHARACTERBUTTONX = 100
 CHARACTERBUTTONY = 64
 SPELLSBUTTONX = 199
 SPELLSBUTTONY = 64
+BATCURSORX = 128
+BATCURSORY = 192
 
 MAINMENU = [
 'AAAAAAAAAAAAAAAAAAAAAAAAA',

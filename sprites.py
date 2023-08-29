@@ -79,6 +79,9 @@ class Item(pygame.sprite.Sprite):
             self.value = 15
             self.slot = HEAD
             self.image = self.game.items_spritesheet.get_sprite(SHIRTX, SHIRTY, self.width, self.height)
+        elif itemid == BATCURSOR:
+            self.image = self.game.items_spritesheet.get_sprite(BATCURSORX, BATCURSORY, self.width, self.height)
+        
         elif itemid == BLANK:
             self._layer = INIT_LAYER
             self.id = 0 #NOTHIN IN THIS SPOT / EMPTY
@@ -663,6 +666,8 @@ class TextSprite(pygame.sprite.Sprite):
             self.image = self.game.npc_textsheet.get_sprite(136, 32, TILESIZE / 2, TILESIZE / 2)
         elif char == '0':
             self.image = self.game.npc_textsheet.get_sprite(152, 32, TILESIZE / 2, TILESIZE / 2)
+        elif char == '<':
+            self.image = self.game.npc_textsheet.get_sprite(169, 32, TILESIZE / 2, TILESIZE / 2)
         else:
             self.image = self.game.npc_textsheet.get_sprite(459, 0, TILESIZE / 2, TILESIZE / 2)
 
