@@ -122,6 +122,8 @@ KELETHINMAIN = [
 'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
 ]
 KELETHINMAINOFFSET = -8
+KELETHINMAINMAXX = 1120
+KELETHINMAINMAXY = 608
 
 MERCHANTSTANDX = 768
 MERCHANTSTANDY = 1728
@@ -136,13 +138,13 @@ FRANTIKSHUT = [
 'B...R...R...............B',
 'B.......................B',
 'B.......................Z',
-'B......................NZ',
+'B.P....................NZ',
 'B...........RRR.........B',
 'B.............R.........B',
 'B.............R.........B',
 'B...........RRR.........B',
 'B.......................B',
-'B...P..C................B',
+'B......C................B',
 'B......D................B',
 'B.......................B',
 'B.......................B',
@@ -159,8 +161,8 @@ ENEMYX = 3
 ENEMYY = 2
 
 #JUST HALF SCREEN SIZE FOR NOW, CALCULATE LATER ON
-FRANTIKSHUTMAXX = 400
-FRANTIKSHUTMAXY = 300
+FRANTIKSHUTMAXX = 800
+FRANTIKSHUTMAXY = 608
 
 ## FRANTIK'S HUT AND KELETHIN SPRITES ##
 

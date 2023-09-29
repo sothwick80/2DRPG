@@ -77,12 +77,6 @@ class Game:
     def new(self):
         # a new game starts
         self.playing = True
-        
-        #CLASS TO HOLD INFO NEEDED FOR CAMERA AND ZONE LOADING
-        self.current_zone = Zone()   
-        self.current_zone.id = FRANTIKSHUT
-        self.current_zone.x = FRANTIKSHUTMAXX
-        self.current_zone.y = FRANTIKSHUTMAXY
 
         # ALL SPRITES TO BE DRAWN MUST GO HERE
         self.all_sprites = pygame.sprite.LayeredUpdates()
@@ -99,11 +93,7 @@ class Game:
         self.menu_sprites = pygame.sprite.LayeredUpdates()
         #self.attacks = pygame.sprite.LayeredUpdates()
 
-        #CREATE PLAYER AND ADD TO PARTY
-        #self.party.append(Player(self, 10, 10))
-        self.party.append(CharacterSheet(self, 10, 10))
-        self.party[self.top_character].calculate_stats()
-        self.createTilemap(self.current_zone.id)
+
         
         #DIALOG
         self.in_dialog = False
@@ -130,6 +120,18 @@ class Game:
         self.inventory_flag[HEAD] = True
         self.inventory_flag[PRIMARY] = True
         #self.inventory_flag[2] = True
+    
+        #CLASS TO HOLD INFO NEEDED FOR CAMERA AND ZONE LOADING
+        self.current_zone = Zone()   
+        self.current_zone.id = FRANTIKSHUT
+        self.current_zone.maxx = FRANTIKSHUTMAXX
+        self.current_zone.maxy = FRANTIKSHUTMAXY
+
+        #CREATE PLAYER AND ADD TO PARTY
+        #self.party.append(Player(self, 10, 10))
+        self.party.append(CharacterSheet(self, 10, 10))
+        self.party[self.top_character].calculate_stats()
+        self.createTilemap(self.current_zone.id)
 
     def showDialog(self, xpos, ypos, dialog):
         tempx = xpos
@@ -149,6 +151,8 @@ class Game:
         if map == FRANTIKSHUT:
             self.dialognpc.clear()
             self.items.clear()
+            self.current_zone.maxx = FRANTIKSHUTMAXX
+            self.current_zone.maxy = FRANTIKSHUTMAXY
             for i, row in enumerate(map):
                 for j, column in enumerate(row):
                     StaticSprite(self, j, i, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
@@ -171,11 +175,23 @@ class Game:
                     if column == "S":
                         self.dialognpc.append(DialogNPC(self, j, i, NPCX, NPCY, DIALOGNPC_LAYER, NEXTNPC))
                     if column == "P": 
-                        self.party[self.top_character].x = j
-                        self.party[self.top_character].y = i
+                        self.party[self.top_character].mapx = self.party[self.top_character].x = j * TILESIZE
+                        self.party[self.top_character].mapy = self.party[self.top_character].y = i * TILESIZE
+                        self.party[self.top_character].rect = self.party[self.top_character].image.get_rect()
+                        self.party[self.top_character].rect.x = self.party[self.top_character].x
+                        self.party[self.top_character].rect.y = self.party[self.top_character].y
+            u = INVBOXA
+            o = self.party[self.top_character].x + 1
+            k = self.party[self.top_character].y + 1
+            while u <= INVBOXD:
+                self.menuboxes[u] = StaticSprite(self, o, k, TILESIZE, 0, INVBAR_LAYER)
+                u += 1
+                o += 1
 
         elif map == KELETHINMAIN:
             self.dialognpc.clear()
+            self.current_zone.maxx = KELETHINMAINMAXX
+            self.current_zone.maxy = KELETHINMAINMAXY
             for i, row in enumerate(map):
                 for j, column in enumerate(row):
                     StaticSprite(self, j, i, FRANTIKGROUNDX, FRANTIKGROUNDY, GROUND_LAYER)
@@ -192,8 +208,11 @@ class Game:
                     if column == "E":
                         AnimatedSprite(self, j, i)
                     if column == "P":
-                        self.party[self.top_character].x = j
-                        self.party[self.top_character].y = i
+                        self.party[self.top_character].mapx = self.party[self.top_character].x = j * TILESIZE
+                        self.party[self.top_character].mapy = self.party[self.top_character].y = i * TILESIZE
+                        self.party[self.top_character].rect = self.party[self.top_character].image.get_rect()
+                        self.party[self.top_character].rect.x = self.party[self.top_character].x
+                        self.party[self.top_character].rect.y = self.party[self.top_character].y
 
         elif map == KELETHINBATTLE:
             #self.mobs.clear()

@@ -109,6 +109,10 @@ class Player(pygame.sprite.Sprite):
         self.width = TILESIZE
         self.height = TILESIZE
 
+        #position on the map
+        self.mapx = self.x
+        self.mapy = self.y
+
         self.x_change = 0
         self.y_change = 0
         self.facing = 'down'
@@ -155,6 +159,8 @@ class Player(pygame.sprite.Sprite):
     #inputcounter = 0
     #showingtext = False
 
+    ## WHEN AT A WALL, STOP THE SPRITE += PLAYERSPEED UNTIL BACK AT CENTER
+    # IF PLAYER IS 1/2 SCREEN WIDTH AWAY, MOVE ONLY PLAYER (GOING LEFT)
     def movement(self):
         keys = pygame.key.get_pressed()
         if self.game.in_dialog or self.game.in_battle:
@@ -162,25 +168,63 @@ class Player(pygame.sprite.Sprite):
         else:
             if keys[pygame.K_a]:
                 #IF PLAYER IS AT EDGE, DON'T MOVE THE SPRITES
-                for sprite in self.game.all_sprites:
-                    sprite.rect.x += PLAYER_SPEED
-                self.x_change -= PLAYER_SPEED
-                self.facing = 'left'
+                if (self.game.current_zone.maxx - self.mapx) < WIN_WIDTH / 2 or (self.game.current_zone.maxx - self.mapx) > WIN_WIDTH / 2:
+                    self.x_change -= PLAYER_SPEED
+                    self.facing = 'left'
+                    self.mapx -= PLAYER_SPEED
+                else:
+                    for sprite in self.game.all_sprites:
+                        sprite.rect.x += PLAYER_SPEED
+                    self.x_change -= PLAYER_SPEED
+                    self.facing = 'left'
+                    self.mapx -= PLAYER_SPEED
+                print (self.mapx, self.mapy)
+
             if keys[pygame.K_d]:
-                for sprite in self.game.all_sprites:
-                    sprite.rect.x -= PLAYER_SPEED
-                self.x_change += PLAYER_SPEED
-                self.facing = 'right'
+                if self.mapx < (WIN_WIDTH / 2):
+                    self.x_change += PLAYER_SPEED
+                    self.facing = 'right'
+                    self.mapx += PLAYER_SPEED
+                elif self.mapx > (WIN_WIDTH / 2) and (self.game.current_zone.maxx - self.mapx) < (WIN_WIDTH / 2):
+                    for sprite in self.game.all_sprites:
+                        sprite.rect.x -= PLAYER_SPEED
+                    self.x_change += PLAYER_SPEED
+                    self.facing = 'right'
+                    self.mapx += PLAYER_SPEED
+                else:
+                    for sprite in self.game.all_sprites:
+                        sprite.rect.x -= PLAYER_SPEED
+                    self.x_change += PLAYER_SPEED
+                    self.facing = 'right'
+                    self.mapx += PLAYER_SPEED
+
+                print (self.mapx, self.mapy)
             if keys[pygame.K_w]:
-                for sprite in self.game.all_sprites:
-                    sprite.rect.y += PLAYER_SPEED
-                self.y_change -= PLAYER_SPEED
-                self.facing = 'up'
+                if (self.game.current_zone.maxy - self.mapy) > WIN_WIDTH / 2 or (self.game.current_zone.maxy - self.mapy) < WIN_WIDTH / 2:
+                    self.y_change -= PLAYER_SPEED
+                    self.facing = 'up'
+                    self.mapy -= PLAYER_SPEED
+                else:
+                    for sprite in self.game.all_sprites:
+                        sprite.rect.y += PLAYER_SPEED
+                    self.y_change -= PLAYER_SPEED
+                    self.facing = 'up'
+                    self.mapy -= PLAYER_SPEED
+
+                print (self.mapx, self.mapy)
             if keys[pygame.K_s]:
-                for sprite in self.game.all_sprites:
-                    sprite.rect.y -= PLAYER_SPEED
-                self.y_change += PLAYER_SPEED
-                self.facing = 'down'
+                if (self.game.current_zone.maxy - self.mapy) > WIN_WIDTH / 2 or (self.game.current_zone.maxy - self.mapy) < WIN_WIDTH / 2:
+                    self.y_change += PLAYER_SPEED
+                    self.facing = 'down'
+                    self.mapy += PLAYER_SPEED
+                else:
+                    for sprite in self.game.all_sprites:
+                        sprite.rect.y -= PLAYER_SPEED
+                    self.y_change += PLAYER_SPEED
+                    self.facing = 'down'
+                    self.mapy += PLAYER_SPEED
+
+                print (self.mapx, self.mapy)
             if keys[pygame.K_i]:
                 self.game.inmenu = True
                 self.game.menu()
@@ -228,24 +272,29 @@ class Player(pygame.sprite.Sprite):
             if hits:
                 if self.x_change > 0:
                     self.rect.x = hits[0].rect.left - self.rect.width
-                    for sprite in self.game.all_sprites:
-                        sprite.rect.x += PLAYER_SPEED
+                    self.mapx -= PLAYER_SPEED
+                    #for sprite in self.game.all_sprites:
+                        #sprite.rect.x += PLAYER_SPEED
                 if self.x_change < 0:
                     self.rect.x = hits[0].rect.right
-                    for sprite in self.game.all_sprites:
-                        sprite.rect.x -= PLAYER_SPEED
+                    self.mapx += PLAYER_SPEED
+                    #for sprite in self.game.all_sprites:
+                        #sprite.rect.x -= PLAYER_SPEED
 
         if direction =='y':
             hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
             if hits:
+                #IF COLLISION, MOVE BACK TO WHERE YOU WERE BEFORE COLLISON
                 if self.y_change > 0:
                     self.rect.y = hits[0].rect.top - self.rect.height
-                    for sprite in self.game.all_sprites:
-                        sprite.rect.y += PLAYER_SPEED
+                    self.mapy -= PLAYER_SPEED
+                    #for sprite in self.game.all_sprites:
+                        #sprite.rect.y += PLAYER_SPEED
                 if self.y_change < 0:
                     self.rect.y = hits[0].rect.bottom
-                    for sprite in self.game.all_sprites:
-                        sprite.rect.y -= PLAYER_SPEED
+                    self.mapy += PLAYER_SPEED
+                    #for sprite in self.game.all_sprites:
+                        #sprite.rect.y -= PLAYER_SPEED
 
     def animate(self):
         if self.facing == "down":
